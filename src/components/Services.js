@@ -1,98 +1,67 @@
-import {
-  FileText,
-  Users,
-  MessageSquare,
-  CreditCard,
-  Calendar,
-  BarChart3,
-} from "lucide-react";
+import { Link } from "react-router-dom";
+import { FileText, DollarSign, Users, CalendarDays } from "lucide-react";
 
 const services = [
   {
     icon: FileText,
-    title: "Layanan Surat",
+    title: "Pengajuan Surat",
     description:
-      "Ajukan surat keterangan domisili, pengantar nikah, usaha, dan SKTM secara online",
-    features: ["Proses cepat", "Tracking status", "Notifikasi otomatis"],
+      "Ajukan berbagai jenis surat keterangan dengan mudah dan cepat secara online.",
+    link: "/layanan/surat",
+  },
+  {
+    icon: DollarSign,
+    title: "Pembayaran Iuran",
+    description:
+      "Bayar iuran bulanan atau iuran khusus padukuhan langsung dari aplikasi.",
+    link: "/layanan/iuran",
   },
   {
     icon: Users,
-    title: "Data Warga",
-    description:
-      "Pengelolaan data penduduk yang terorganisir dan mudah diakses",
-    features: ["Data terpusat", "Update real-time", "Kategori lengkap"],
-  },
-  {
-    icon: MessageSquare,
     title: "Laporan Warga",
     description:
-      "Sampaikan laporan dan aspirasi langsung kepada perangkat desa",
-    features: ["Laporan foto", "Lokasi GPS", "Status tindakan"],
+      "Sampaikan laporan atau keluhan terkait fasilitas dan kejadian di lingkungan Anda.",
+    link: "/lapor",
   },
   {
-    icon: CreditCard,
-    title: "Pembayaran Iuran",
+    icon: CalendarDays,
+    title: "Informasi Kegiatan",
     description:
-      "Bayar iuran RT dan padukuhan dengan mudah melalui berbagai metode",
-    features: ["QRIS", "Transfer bank", "Riwayat lengkap"],
-  },
-  {
-    icon: Calendar,
-    title: "Agenda Kegiatan",
-    description: "Informasi lengkap tentang kegiatan dan acara di padukuhan",
-    features: ["Jadwal terkini", "Reminder", "Partisipasi online"],
-  },
-  {
-    icon: BarChart3,
-    title: "Dashboard RT/Dukuh",
-    description: "Panel kontrol untuk RT dan Dukuh mengelola administrasi",
-    features: ["Statistik real-time", "Laporan otomatis", "Manajemen kas"],
+      "Dapatkan informasi terbaru mengenai kegiatan dan acara di padukuhan.",
+    link: "/layanan/kegiatan",
   },
 ];
 
 const Services = () => {
   return (
-    <section className="py-16 bg-white">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold text-green-800 mb-4">
-            Layanan Unggulan SIPEDES
-          </h2>
-          <p className="text-lg text-green-600 max-w-2xl mx-auto">
-            Berbagai fitur lengkap untuk mendukung pelayanan digital di tingkat
-            padukuhan
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service, index) => {
-            const Icon = service.icon;
-            return (
-              <div
-                key={index}
-                className="border border-green-100 rounded-lg p-6 hover:shadow-lg transition-shadow duration-300 bg-white"
+    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+      <div className="max-w-7xl mx-auto text-center">
+        <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">
+          Layanan Unggulan Kami
+        </h2>
+        <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">
+          SIPEDES hadir untuk mempermudah berbagai kebutuhan administrasi dan
+          informasi warga desa.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {services.map((service, index) => (
+            <div
+              key={index}
+              className="card p-6 flex flex-col items-center text-center"
+            >
+              <service.icon className="h-12 w-12 text-green-600 mb-4" />
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                {service.title}
+              </h3>
+              <p className="text-gray-600 mb-4">{service.description}</p>
+              <Link
+                to={service.link}
+                className="text-green-600 hover:underline font-medium"
               >
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                  <Icon className="w-6 h-6 text-green-600" />
-                </div>
-                <h3 className="text-xl font-semibold text-green-800 mb-2">
-                  {service.title}
-                </h3>
-                <p className="text-green-600 mb-4">{service.description}</p>
-                <ul className="space-y-2">
-                  {service.features.map((feature, featureIndex) => (
-                    <li
-                      key={featureIndex}
-                      className="flex items-center text-sm text-green-700"
-                    >
-                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            );
-          })}
+                Selengkapnya &rarr;
+              </Link>
+            </div>
+          ))}
         </div>
       </div>
     </section>

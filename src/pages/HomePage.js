@@ -6,11 +6,13 @@ import Footer from "../components/layout/Footer";
 
 const HomePage = () => {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="flex flex-col min-h-screen">
       <Header />
-      <Hero />
-      <Services />
-      <News />
+      <main className="flex-grow">
+        <Hero />
+        <Services />
+        <News />
+      </main>
       <Footer />
     </div>
   );

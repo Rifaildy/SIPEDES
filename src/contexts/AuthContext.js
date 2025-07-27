@@ -1,86 +1,34 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
-import { authService } from "../services/authService";
+// This file is no longer actively used for authentication state,
+// as Redux is now handling it via src/redux/auth/authSlice.js.
+// Keeping it here for reference if you had other specific context logic.
 
-const AuthContext = createContext();
+import { createContext, useState, useContext } from "react";
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-};
+const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null); // Example: { id: '123', email: 'test@example.com', role: 'warga' }
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  useEffect(() => {
-    // Check if user is logged in from localStorage
-    const checkAuth = async () => {
-      try {
-        const token = localStorage.getItem("sipedes_token");
-        if (token) {
-          const userData = await authService.verifyToken(token);
-          setUser(userData);
-        }
-      } catch (error) {
-        console.error("Auth check failed:", error);
-        localStorage.removeItem("sipedes_token");
-        localStorage.removeItem("sipedes_user");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
-  const login = async (credentials) => {
-    setLoading(true);
-    try {
-      const response = await authService.login(credentials);
-      setUser(response.user);
-      localStorage.setItem("sipedes_token", response.token);
-      localStorage.setItem("sipedes_user", JSON.stringify(response.user));
-      return response;
-    } catch (error) {
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const register = async (userData) => {
-    setLoading(true);
-    try {
-      const response = await authService.register(userData);
-      setUser(response.user);
-      localStorage.setItem("sipedes_token", response.token);
-      localStorage.setItem("sipedes_user", JSON.stringify(response.user));
-      return response;
-    } catch (error) {
-      throw error;
-    } finally {
-      setLoading(false);
-    }
+  const login = (userData) => {
+    setUser(userData);
+    setIsAuthenticated(true);
+    // In a real app, you'd store token in localStorage/sessionStorage
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("sipedes_token");
-    localStorage.removeItem("sipedes_user");
+    setIsAuthenticated(false);
+    // Clear token from storage
   };
 
-  const value = {
-    user,
-    login,
-    register,
-    logout,
-    loading,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, isAuthenticated, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
+
+export const useAuth = () => useContext(AuthContext);

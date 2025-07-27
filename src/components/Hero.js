@@ -1,90 +1,42 @@
 import { Link } from "react-router-dom";
-import { FileText, MessageSquare, Calendar, CreditCard } from "lucide-react";
 
 const Hero = () => {
   return (
-    <section className="bg-gradient-to-br from-green-50 to-green-100 py-16">
-      <div className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Content */}
-          <div>
-            <h1 className="text-4xl lg:text-5xl font-bold text-green-800 mb-6">
-              Layanan Digital Terpadu untuk{" "}
-              <span className="text-green-600">Padukuhan</span>
-            </h1>
-            <p className="text-lg text-green-700 mb-8 leading-relaxed">
-              SIPEDES hadir untuk memudahkan pelayanan administrasi, pengelolaan
-              iuran, pelaporan warga, dan informasi kegiatan di tingkat
-              padukuhan. Semua dalam satu platform yang mudah digunakan.
-            </p>
-
-            {/* Quick Actions */}
-            <div className="grid grid-cols-2 gap-4 mb-8">
-              <Link
-                to="/layanan/surat"
-                className="bg-green-600 hover:bg-green-700 text-white h-auto py-4 px-4 rounded-lg flex flex-col items-center space-y-2 transition-colors"
-              >
-                <FileText className="w-6 h-6" />
-                <span>Ajukan Surat</span>
-              </Link>
-              <Link
-                to="/lapor"
-                className="border border-green-600 text-green-600 hover:bg-green-50 h-auto py-4 px-4 rounded-lg flex flex-col items-center space-y-2 transition-colors"
-              >
-                <MessageSquare className="w-6 h-6" />
-                <span>Lapor Warga</span>
-              </Link>
-              <Link
-                to="/layanan/iuran"
-                className="border border-green-600 text-green-600 hover:bg-green-50 h-auto py-4 px-4 rounded-lg flex flex-col items-center space-y-2 transition-colors"
-              >
-                <CreditCard className="w-6 h-6" />
-                <span>Bayar Iuran</span>
-              </Link>
-              <Link
-                to="/kegiatan"
-                className="border border-green-600 text-green-600 hover:bg-green-50 h-auto py-4 px-4 rounded-lg flex flex-col items-center space-y-2 transition-colors"
-              >
-                <Calendar className="w-6 h-6" />
-                <span>Lihat Kegiatan</span>
-              </Link>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                to="/login"
-                className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors text-center"
-              >
-                Mulai Sekarang
-              </Link>
-              <Link
-                to="/tentang"
-                className="px-6 py-3 border border-green-600 text-green-600 hover:bg-green-50 rounded-lg font-medium transition-colors text-center"
-              >
-                Pelajari Lebih Lanjut
-              </Link>
-            </div>
+    <section className="relative bg-gradient-to-r from-green-600 to-green-800 text-white py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <div className="absolute inset-0 z-0">
+        <img
+          src="/placeholder.svg?height=800&width=1200"
+          alt="Background Pattern"
+          className="w-full h-full object-cover opacity-20"
+        />
+      </div>
+      <div className="relative z-10 max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-10">
+        <div className="text-center lg:text-left lg:w-1/2 animate-fade-in">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
+            SIPEDES: Sistem Pelayanan Desa Digital
+          </h1>
+          <p className="text-lg sm:text-xl mb-8 max-w-xl mx-auto lg:mx-0">
+            Mempermudah akses layanan administrasi desa, informasi, dan
+            partisipasi warga dalam satu platform digital.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
+            <Link to="/layanan" className="btn-primary animate-slide-up">
+              Jelajahi Layanan
+            </Link>
+            <Link
+              to="/tentang"
+              className="btn-secondary animate-slide-up delay-100"
+            >
+              Tentang Kami
+            </Link>
           </div>
-
-          {/* Image */}
-          <div className="relative">
-            <div className="bg-white rounded-2xl shadow-xl p-8">
-              <img
-                src="/placeholder.svg?height=400&width=500"
-                alt="Ilustrasi Pelayanan Desa Digital"
-                className="w-full h-auto rounded-lg"
-              />
-            </div>
-            {/* Floating Cards */}
-            <div className="absolute -top-4 -left-4 bg-green-600 text-white p-4 rounded-lg shadow-lg">
-              <div className="text-2xl font-bold">24/7</div>
-              <div className="text-sm">Layanan Online</div>
-            </div>
-            <div className="absolute -bottom-4 -right-4 bg-white p-4 rounded-lg shadow-lg border border-green-100">
-              <div className="text-2xl font-bold text-green-600">100%</div>
-              <div className="text-sm text-green-800">Digital</div>
-            </div>
-          </div>
+        </div>
+        <div className="lg:w-1/2 flex justify-center lg:justify-end animate-bounce-in">
+          <img
+            src="/placeholder.svg?height=400&width=600"
+            alt="SIPEDES Illustration"
+            className="w-full max-w-md rounded-lg shadow-2xl"
+          />
         </div>
       </div>
     </section>

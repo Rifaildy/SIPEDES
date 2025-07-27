@@ -1,541 +1,406 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
-import { useAuth } from "../../contexts/AuthContext";
-import { useNotification } from "../../contexts/NotificationContext";
+import { showToast } from "../../utils";
 import {
-  CreditCard,
+  DollarSign,
   CheckCircle,
-  AlertCircle,
-  Clock,
+  CreditCard,
+  Banknote,
   QrCode,
-  Smartphone,
-  Building,
-  Receipt,
+  Clock,
 } from "lucide-react";
+import { ThreeDots } from "react-loader-spinner";
 
 const IuranPage = () => {
-  const { user } = useAuth();
-  const { showSuccess, showError } = useNotification();
-  const [loading, setLoading] = useState(false);
-  const [tagihan, setTagihan] = useState([]);
-  const [riwayat, setRiwayat] = useState([]);
-  const [selectedPayment, setSelectedPayment] = useState(null);
+  const [activeTab, setActiveTab] = useState("tagihan"); // 'tagihan', 'riwayat'
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedBill, setSelectedBill] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("");
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
-  useEffect(() => {
-    // Simulate loading data
-    setTimeout(() => {
-      setTagihan([
-        {
-          id: 1,
-          jenis: "Iuran Ronda",
-          periode: "Februari 2024",
-          nominal: 10000,
-          jatuhTempo: "2024-02-28",
-          status: "belum_bayar",
-          tipe: "rt",
-        },
-        {
-          id: 2,
-          jenis: "Iuran Sampah",
-          periode: "Februari 2024",
-          nominal: 15000,
-          jatuhTempo: "2024-02-25",
-          status: "terlambat",
-          tipe: "padukuhan",
-        },
-        {
-          id: 3,
-          jenis: "Iuran 17-an",
-          periode: "2024",
-          nominal: 25000,
-          jatuhTempo: "2024-08-01",
-          status: "belum_bayar",
-          tipe: "rt",
-        },
-      ]);
-
-      setRiwayat([
-        {
-          id: 1,
-          jenis: "Iuran Ronda",
-          periode: "Januari 2024",
-          nominal: 10000,
-          tanggalBayar: "2024-01-15",
-          metode: "QRIS",
-          status: "lunas",
-        },
-        {
-          id: 2,
-          jenis: "Iuran Sampah",
-          periode: "Januari 2024",
-          nominal: 15000,
-          tanggalBayar: "2024-01-10",
-          metode: "Transfer Bank",
-          status: "lunas",
-        },
-      ]);
-    }, 1000);
-  }, []);
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "belum_bayar":
-        return "text-yellow-600 bg-yellow-100";
-      case "terlambat":
-        return "text-red-600 bg-red-100";
-      case "lunas":
-        return "text-green-600 bg-green-100";
-      default:
-        return "text-gray-600 bg-gray-100";
-    }
-  };
-
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case "belum_bayar":
-        return <Clock className="w-4 h-4" />;
-      case "terlambat":
-        return <AlertCircle className="w-4 h-4" />;
-      case "lunas":
-        return <CheckCircle className="w-4 h-4" />;
-      default:
-        return <Clock className="w-4 h-4" />;
-    }
-  };
-
-  const handlePayment = async () => {
-    if (!paymentMethod) {
-      showError("Pilih metode pembayaran terlebih dahulu");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      // Simulate payment process
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      showSuccess("Pembayaran berhasil! Terima kasih atas partisipasi Anda.");
-      setSelectedPayment(null);
-      setPaymentMethod("");
-
-      // Update tagihan status
-      setTagihan((prev) =>
-        prev.map((item) =>
-          item.id === selectedPayment.id ? { ...item, status: "lunas" } : item
-        )
-      );
-    } catch (error) {
-      showError("Terjadi kesalahan saat memproses pembayaran");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const totalTagihan = tagihan
-    .filter((item) => item.status !== "lunas")
-    .reduce((sum, item) => sum + item.nominal, 0);
-
-  const paymentMethods = [
+  const activeBills = [
     {
-      id: "qris",
-      name: "QRIS",
-      icon: QrCode,
-      description: "Scan QR Code dengan aplikasi mobile banking",
+      id: 1,
+      type: "Iuran Kebersihan",
+      period: "Juli 2024",
+      amount: 25000,
+      status: "Belum Lunas",
     },
     {
-      id: "transfer",
-      name: "Transfer Bank",
-      icon: Building,
-      description: "Transfer ke rekening RT/Padukuhan",
+      id: 2,
+      type: "Iuran Keamanan",
+      period: "Juli 2024",
+      amount: 20000,
+      status: "Belum Lunas",
     },
     {
-      id: "ewallet",
-      name: "E-Wallet",
-      icon: Smartphone,
-      description: "Bayar dengan GoPay, OVO, DANA",
+      id: 3,
+      type: "Kas RT",
+      period: "Juli 2024",
+      amount: 10000,
+      status: "Belum Lunas",
     },
   ];
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
+  const paymentHistory = [
+    {
+      id: 101,
+      type: "Iuran Kebersihan",
+      period: "Juni 2024",
+      amount: 25000,
+      date: "20 Juni 2024",
+      method: "QRIS",
+    },
+    {
+      id: 102,
+      type: "Iuran Keamanan",
+      period: "Juni 2024",
+      amount: 20000,
+      date: "20 Juni 2024",
+      method: "Transfer Bank",
+    },
+    {
+      id: 103,
+      type: "Kas RT",
+      period: "Juni 2024",
+      amount: 10000,
+      date: "20 Juni 2024",
+      method: "E-Wallet",
+    },
+  ];
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-green-800 mb-4">
-              Pembayaran Iuran
-            </h1>
-            <p className="text-green-600">
-              Kelola pembayaran iuran RT dan padukuhan dengan mudah
-            </p>
-          </div>
+  const handlePayClick = (bill) => {
+    setSelectedBill(bill);
+    setShowPaymentModal(true);
+  };
+
+  const handlePaymentSubmit = async () => {
+    if (!paymentMethod) {
+      showToast("Pilih metode pembayaran terlebih dahulu.", "error");
+      return;
+    }
+
+    setIsProcessingPayment(true);
+    showToast(`Memproses pembayaran ${selectedBill.type}...`, "info");
+
+    // Simulate payment processing
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    setIsProcessingPayment(false);
+    setShowPaymentModal(false);
+    showToast(`Pembayaran ${selectedBill.type} berhasil!`, "success");
+    // In a real app, you would update the bill status in your state/backend
+  };
+
+  const totalActiveBills = activeBills.reduce(
+    (sum, bill) => sum + bill.amount,
+    0
+  );
+  const totalPaidThisMonth = paymentHistory
+    .filter((item) => new Date(item.date).getMonth() === new Date().getMonth())
+    .reduce((sum, item) => sum + item.amount, 0);
+
+  return (
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      <Header />
+      <main className="flex-grow py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-4xl font-extrabold text-gray-800 text-center mb-6">
+            Pembayaran Iuran Warga
+          </h1>
+          <p className="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto">
+            Kelola dan bayar iuran desa Anda dengan mudah dan aman.
+          </p>
 
           {/* Summary Cards */}
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <div className="card p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Total Tagihan</p>
-                  <p className="text-2xl font-bold text-red-600">
-                    Rp {totalTagihan.toLocaleString()}
-                  </p>
-                </div>
-                <AlertCircle className="w-8 h-8 text-red-600" />
-              </div>
-              <div className="mt-2 text-sm text-gray-500">
-                {tagihan.filter((item) => item.status !== "lunas").length}{" "}
-                tagihan belum dibayar
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="card p-6 flex flex-col items-center text-center bg-blue-50">
+              <DollarSign className="h-12 w-12 text-blue-600 mb-3" />
+              <h3 className="text-xl font-semibold text-blue-800 mb-1">
+                Total Tagihan Aktif
+              </h3>
+              <p className="text-2xl font-bold text-blue-900">
+                Rp {totalActiveBills.toLocaleString("id-ID")}
+              </p>
             </div>
-
-            <div className="card p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Dibayar Bulan Ini</p>
-                  <p className="text-2xl font-bold text-green-600">
-                    Rp{" "}
-                    {riwayat
-                      .reduce((sum, item) => sum + item.nominal, 0)
-                      .toLocaleString()}
-                  </p>
-                </div>
-                <CheckCircle className="w-8 h-8 text-green-600" />
-              </div>
-              <div className="mt-2 text-sm text-gray-500">
-                {riwayat.length} pembayaran berhasil
-              </div>
+            <div className="card p-6 flex flex-col items-center text-center bg-green-50">
+              <CheckCircle className="h-12 w-12 text-green-600 mb-3" />
+              <h3 className="text-xl font-semibold text-green-800 mb-1">
+                Dibayar Bulan Ini
+              </h3>
+              <p className="text-2xl font-bold text-green-900">
+                Rp {totalPaidThisMonth.toLocaleString("id-ID")}
+              </p>
             </div>
-
-            <div className="card p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Status Pembayaran</p>
-                  <p className="text-lg font-bold text-green-800">
-                    {totalTagihan === 0 ? "Lunas" : "Ada Tunggakan"}
-                  </p>
-                </div>
-                <CreditCard className="w-8 h-8 text-green-600" />
-              </div>
-              <div className="mt-2 text-sm text-gray-500">
-                Update terakhir: Hari ini
-              </div>
+            <div className="card p-6 flex flex-col items-center text-center bg-yellow-50">
+              <Clock className="h-12 w-12 text-yellow-600 mb-3" />
+              <h3 className="text-xl font-semibold text-yellow-800 mb-1">
+                Status Iuran
+              </h3>
+              <p className="text-2xl font-bold text-yellow-900">
+                {activeBills.length > 0 ? "Ada Tagihan" : "Lunas"}
+              </p>
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Tagihan Aktif */}
-            <div className="lg:col-span-2">
-              <div className="card">
-                <div className="p-6 border-b border-gray-100">
-                  <h2 className="text-xl font-bold text-green-800">
-                    Tagihan Aktif
-                  </h2>
-                </div>
-                <div className="p-6">
-                  <div className="space-y-4">
-                    {tagihan.map((item) => (
-                      <div
-                        key={item.id}
-                        className="border border-gray-200 rounded-lg p-4"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-4">
-                            <div
-                              className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                                item.tipe === "rt"
-                                  ? "bg-blue-100"
-                                  : "bg-purple-100"
-                              }`}
-                            >
-                              <CreditCard
-                                className={`w-6 h-6 ${
-                                  item.tipe === "rt"
-                                    ? "text-blue-600"
-                                    : "text-purple-600"
-                                }`}
-                              />
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="font-medium text-green-800">
-                                {item.jenis}
-                              </h3>
-                              <p className="text-sm text-gray-600">
-                                Periode: {item.periode}
-                              </p>
-                              <p className="text-sm text-gray-500">
-                                Jatuh tempo: {item.jatuhTempo}
-                              </p>
-                              <p className="text-lg font-bold text-green-800 mt-1">
-                                Rp {item.nominal.toLocaleString()}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex flex-col items-end space-y-2">
-                            <span
-                              className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                                item.status
-                              )}`}
-                            >
-                              {getStatusIcon(item.status)}
-                              <span>
-                                {item.status === "belum_bayar"
-                                  ? "Belum Bayar"
-                                  : item.status === "terlambat"
-                                  ? "Terlambat"
-                                  : "Lunas"}
-                              </span>
-                            </span>
-                            {item.status !== "lunas" && (
-                              <button
-                                onClick={() => setSelectedPayment(item)}
-                                className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700 transition-colors"
-                              >
-                                Bayar Sekarang
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+          {/* Tabs Navigation */}
+          <div className="bg-white rounded-lg shadow-sm mb-6">
+            <div className="flex border-b border-gray-200">
+              <button
+                className={`py-3 px-6 text-lg font-medium ${
+                  activeTab === "tagihan"
+                    ? "text-green-700 border-b-2 border-green-700"
+                    : "text-gray-600 hover:text-green-700"
+                }`}
+                onClick={() => setActiveTab("tagihan")}
+              >
+                Tagihan Aktif
+              </button>
+              <button
+                className={`py-3 px-6 text-lg font-medium ${
+                  activeTab === "riwayat"
+                    ? "text-green-700 border-b-2 border-green-700"
+                    : "text-gray-600 hover:text-green-700"
+                }`}
+                onClick={() => setActiveTab("riwayat")}
+              >
+                Riwayat Pembayaran
+              </button>
+            </div>
+          </div>
 
-              {/* Riwayat Pembayaran */}
-              <div className="card mt-8">
-                <div className="p-6 border-b border-gray-100">
-                  <h2 className="text-xl font-bold text-green-800">
-                    Riwayat Pembayaran
-                  </h2>
+          {/* Tab Content */}
+          <div className="card p-6">
+            {activeTab === "tagihan" && (
+              <div>
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                  Daftar Tagihan Aktif
+                </h2>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Jenis Iuran
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Periode
+                        </th>
+                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Jumlah (Rp)
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Status
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Aksi
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {activeBills.map((bill) => (
+                        <tr key={bill.id}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {bill.type}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                            {bill.period}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-600">
+                            {bill.amount.toLocaleString("id-ID")}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                              {bill.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
+                            <button
+                              onClick={() => handlePayClick(bill)}
+                              className="btn-primary text-xs py-1 px-3"
+                            >
+                              Bayar
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-                <div className="p-6">
-                  <div className="space-y-4">
-                    {riwayat.map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-center justify-between p-4 bg-green-50 rounded-lg"
-                      >
-                        <div className="flex items-center space-x-4">
-                          <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                            <CheckCircle className="w-5 h-5 text-green-600" />
-                          </div>
-                          <div>
-                            <h3 className="font-medium text-green-800">
-                              {item.jenis}
-                            </h3>
-                            <p className="text-sm text-gray-600">
-                              Periode: {item.periode}
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              Dibayar: {item.tanggalBayar} via {item.metode}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-bold text-green-800">
-                            Rp {item.nominal.toLocaleString()}
-                          </p>
-                          <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">
-                            Lunas
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                {activeBills.length === 0 && (
+                  <p className="text-center text-gray-500 mt-4">
+                    Tidak ada tagihan aktif.
+                  </p>
+                )}
+              </div>
+            )}
+
+            {activeTab === "riwayat" && (
+              <div>
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                  Riwayat Pembayaran
+                </h2>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Jenis Iuran
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Periode
+                        </th>
+                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Jumlah (Rp)
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Tanggal Bayar
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Metode
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {paymentHistory.map((item) => (
+                        <tr key={item.id}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {item.type}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                            {item.period}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-600">
+                            {item.amount.toLocaleString("id-ID")}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                            {item.date}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                            {item.method}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
+                {paymentHistory.length === 0 && (
+                  <p className="text-center text-gray-500 mt-4">
+                    Tidak ada riwayat pembayaran.
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
+      <Footer />
+
+      {/* Payment Modal */}
+      {showPaymentModal && selectedBill && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full shadow-xl">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              Bayar {selectedBill.type}
+            </h2>
+            <p className="text-gray-700 mb-2">
+              Periode:{" "}
+              <span className="font-semibold">{selectedBill.period}</span>
+            </p>
+            <p className="text-gray-700 mb-6">
+              Jumlah:{" "}
+              <span className="text-green-600 font-bold text-xl">
+                Rp {selectedBill.amount.toLocaleString("id-ID")}
+              </span>
+            </p>
+
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Pilih Metode Pembayaran
+              </label>
+              <div className="grid grid-cols-2 gap-4">
+                <button
+                  type="button"
+                  className={`flex flex-col items-center justify-center p-4 border rounded-lg transition-all duration-200 ${
+                    paymentMethod === "QRIS"
+                      ? "border-green-600 bg-green-50"
+                      : "border-gray-300 hover:border-green-400"
+                  }`}
+                  onClick={() => setPaymentMethod("QRIS")}
+                >
+                  <QrCode size={32} className="text-green-600 mb-2" />
+                  <span className="text-sm font-medium text-gray-800">
+                    QRIS
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  className={`flex flex-col items-center justify-center p-4 border rounded-lg transition-all duration-200 ${
+                    paymentMethod === "Transfer Bank"
+                      ? "border-green-600 bg-green-50"
+                      : "border-gray-300 hover:border-green-400"
+                  }`}
+                  onClick={() => setPaymentMethod("Transfer Bank")}
+                >
+                  <Banknote size={32} className="text-green-600 mb-2" />
+                  <span className="text-sm font-medium text-gray-800">
+                    Transfer Bank
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  className={`flex flex-col items-center justify-center p-4 border rounded-lg transition-all duration-200 ${
+                    paymentMethod === "E-Wallet"
+                      ? "border-green-600 bg-green-50"
+                      : "border-gray-300 hover:border-green-400"
+                  }`}
+                  onClick={() => setPaymentMethod("E-Wallet")}
+                >
+                  <CreditCard size={32} className="text-green-600 mb-2" />
+                  <span className="text-sm font-medium text-gray-800">
+                    E-Wallet
+                  </span>
+                </button>
               </div>
             </div>
 
-            {/* Sidebar */}
-            <div className="space-y-6">
-              {/* Info Pembayaran */}
-              <div className="card p-6">
-                <h3 className="font-semibold text-green-800 mb-4">
-                  Informasi Pembayaran
-                </h3>
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span className="text-gray-700">
-                      Iuran RT dikelola langsung oleh RT
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                    <span className="text-gray-700">
-                      Iuran Padukuhan disetorkan ke Dukuh
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-gray-700">
-                      Pembayaran otomatis tercatat sistem
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Kontak */}
-              <div className="card p-6">
-                <h3 className="font-semibold text-green-800 mb-4">
-                  Butuh Bantuan?
-                </h3>
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">
-                      Ketua RT
-                    </p>
-                    <p className="text-green-800">Pak Slamet</p>
-                    <p className="text-sm text-gray-600">081234567890</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">
-                      Bendahara RT
-                    </p>
-                    <p className="text-green-800">Bu Sari</p>
-                    <p className="text-sm text-gray-600">081234567891</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Tips */}
-              <div className="card p-6">
-                <h3 className="font-semibold text-green-800 mb-4">
-                  Tips Pembayaran
-                </h3>
-                <ul className="space-y-2 text-sm text-gray-700">
-                  <li className="flex items-start space-x-2">
-                    <div className="w-1 h-1 bg-green-500 rounded-full mt-2"></div>
-                    <span>Bayar sebelum tanggal jatuh tempo</span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <div className="w-1 h-1 bg-green-500 rounded-full mt-2"></div>
-                    <span>Simpan bukti pembayaran digital</span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <div className="w-1 h-1 bg-green-500 rounded-full mt-2"></div>
-                    <span>Hubungi RT jika ada kendala</span>
-                  </li>
-                </ul>
-              </div>
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setShowPaymentModal(false)}
+                className="btn-secondary"
+                disabled={isProcessingPayment}
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handlePaymentSubmit}
+                className="btn-primary flex items-center justify-center"
+                disabled={isProcessingPayment || !paymentMethod}
+              >
+                {isProcessingPayment ? (
+                  <ThreeDots
+                    visible={true}
+                    height="20"
+                    width="40"
+                    color="#ffffff"
+                    radius="9"
+                    ariaLabel="three-dots-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                  />
+                ) : (
+                  "Konfirmasi Pembayaran"
+                )}
+              </button>
             </div>
           </div>
         </div>
-
-        {/* Payment Modal */}
-        {selectedPayment && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6 border-b border-gray-100">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xl font-bold text-green-800">
-                    Pembayaran
-                  </h3>
-                  <button
-                    onClick={() => setSelectedPayment(null)}
-                    className="text-gray-400 hover:text-gray-600"
-                  >
-                    ✕
-                  </button>
-                </div>
-              </div>
-
-              <div className="p-6">
-                {/* Payment Details */}
-                <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                  <h4 className="font-medium text-green-800 mb-2">
-                    {selectedPayment.jenis}
-                  </h4>
-                  <p className="text-sm text-gray-600 mb-1">
-                    Periode: {selectedPayment.periode}
-                  </p>
-                  <p className="text-2xl font-bold text-green-800">
-                    Rp {selectedPayment.nominal.toLocaleString()}
-                  </p>
-                </div>
-
-                {/* Payment Methods */}
-                <div className="mb-6">
-                  <h4 className="font-medium text-green-800 mb-4">
-                    Pilih Metode Pembayaran
-                  </h4>
-                  <div className="space-y-3">
-                    {paymentMethods.map((method) => {
-                      const Icon = method.icon;
-                      return (
-                        <label
-                          key={method.id}
-                          className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${
-                            paymentMethod === method.id
-                              ? "border-green-500 bg-green-50"
-                              : "border-gray-200 hover:border-green-300"
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name="paymentMethod"
-                            value={method.id}
-                            checked={paymentMethod === method.id}
-                            onChange={(e) => setPaymentMethod(e.target.value)}
-                            className="sr-only"
-                          />
-                          <Icon className="w-6 h-6 text-green-600 mr-3" />
-                          <div className="flex-1">
-                            <p className="font-medium text-green-800">
-                              {method.name}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              {method.description}
-                            </p>
-                          </div>
-                          {paymentMethod === method.id && (
-                            <CheckCircle className="w-5 h-5 text-green-600" />
-                          )}
-                        </label>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex space-x-3">
-                  <button
-                    onClick={() => setSelectedPayment(null)}
-                    className="btn-secondary flex-1"
-                  >
-                    Batal
-                  </button>
-                  <button
-                    onClick={handlePayment}
-                    disabled={loading || !paymentMethod}
-                    className="btn-primary flex-1 flex items-center justify-center"
-                  >
-                    {loading ? (
-                      <>
-                        <div className="spinner mr-2"></div>
-                        Memproses...
-                      </>
-                    ) : (
-                      <>
-                        <Receipt className="w-4 h-4 mr-2" />
-                        Bayar Sekarang
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </main>
-
-      <Footer />
+      )}
     </div>
   );
 };

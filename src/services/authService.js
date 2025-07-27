@@ -1,93 +1,48 @@
-import axios from "axios";
+// This file would contain actual API calls for authentication.
+// For now, it's simulated in LoginPage.js and RegisterPage.js.
 
-const API_BASE_URL =
-  process.env.REACT_APP_API_URL || "http://localhost:5000/api";
-
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
-// Add token to requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("sipedes_token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-export const authService = {
-  async login(credentials) {
-    try {
-      // For demo purposes, simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Mock response - replace with actual API call
-      if (
-        credentials.phone === "081234567890" &&
-        credentials.password === "password123"
-      ) {
-        return {
-          user: {
-            id: "1",
-            name: "John Doe",
-            phone: "081234567890",
-            email: "john@example.com",
-            role: "warga",
-            rt_id: "RT001",
-            padukuhan_id: "PAD001",
-          },
-          token: "mock-jwt-token",
-        };
-      } else {
-        throw new Error("Nomor telepon atau password salah");
-      }
-    } catch (error) {
-      throw error;
-    }
+const authService = {
+  login: async (email, password) => {
+    // Simulate API call
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (
+          (email === "warga@example.com" ||
+            email === "rt@example.com" ||
+            email === "dukuh@example.com") &&
+          password === "password123"
+        ) {
+          const role = email.split("@")[0]; // Extract role from email for simulation
+          resolve({
+            success: true,
+            message: "Login successful",
+            user: { email, role },
+          });
+        } else {
+          reject({ success: false, message: "Invalid credentials" });
+        }
+      }, 1000);
+    });
   },
 
-  async register(userData) {
-    try {
-      // For demo purposes, simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Mock response - replace with actual API call
-      return {
-        user: {
-          id: Date.now().toString(),
-          name: userData.name,
-          phone: userData.phone,
-          email: userData.email,
-          role: "warga",
-          rt_id: userData.rt_id,
-          padukuhan_id: "PAD001",
-        },
-        token: "mock-jwt-token-" + Date.now(),
-      };
-    } catch (error) {
-      throw error;
-    }
+  register: async (name, email, password) => {
+    // Simulate API call
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        // In a real app, you'd check if email already exists etc.
+        resolve({ success: true, message: "Registration successful" });
+      }, 1000);
+    });
   },
 
-  async verifyToken(token) {
-    try {
-      // For demo purposes, return mock user data
-      const savedUser = localStorage.getItem("sipedes_user");
-      if (savedUser) {
-        return JSON.parse(savedUser);
-      }
-      throw new Error("Invalid token");
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  async logout() {
-    // In real app, call API to invalidate token
-    return Promise.resolve();
+  logout: async () => {
+    // Simulate API call
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({ success: true, message: "Logout successful" });
+      }, 500);
+    });
   },
 };
+
+export default authService;

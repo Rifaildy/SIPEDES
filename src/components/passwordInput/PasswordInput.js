@@ -24,10 +24,10 @@ const PasswordInput = ({
         value={value}
         onChange={onChange}
         name={name}
-        className="form-input pr-10" // Added pr-10 for icon spacing
+        className="auth-form-input pr-10" // Added pr-10 for icon spacing
       />
       <span
-        className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-gray-500"
+        className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500"
         onClick={togglePasswordVisibility}
       >
         {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}

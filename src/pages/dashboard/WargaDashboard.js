@@ -1,314 +1,151 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { useAuth } from "../../contexts/AuthContext";
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
 import {
   FileText,
-  CreditCard,
-  MessageSquare,
-  Calendar,
+  DollarSign,
+  Bell,
+  CalendarDays,
+  User,
   CheckCircle,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const WargaDashboard = () => {
-  const { user } = useAuth();
-  const [stats, setStats] = useState({
-    totalSurat: 0,
-    suratProses: 0,
-    suratSelesai: 0,
-    totalIuran: 0,
-    iuranLunas: 0,
-    iuranTunggak: 0,
-    totalLaporan: 0,
-    laporanProses: 0,
-  });
-
-  useEffect(() => {
-    // Simulate loading stats
-    setTimeout(() => {
-      setStats({
-        totalSurat: 5,
-        suratProses: 2,
-        suratSelesai: 3,
-        totalIuran: 150000,
-        iuranLunas: 100000,
-        iuranTunggak: 50000,
-        totalLaporan: 2,
-        laporanProses: 1,
-      });
-    }, 1000);
-  }, []);
-
+  // Mock Data for Warga Dashboard
   const quickActions = [
     {
       title: "Ajukan Surat",
-      description: "Buat pengajuan surat keterangan",
+      description: "Mulai pengajuan surat keterangan",
       icon: FileText,
       link: "/layanan/surat",
-      color: "bg-blue-500",
     },
     {
       title: "Bayar Iuran",
-      description: "Bayar iuran RT dan padukuhan",
-      icon: CreditCard,
+      description: "Cek dan bayar tagihan iuran",
+      icon: DollarSign,
       link: "/layanan/iuran",
-      color: "bg-green-500",
     },
     {
-      title: "Buat Laporan",
-      description: "Sampaikan laporan atau aspirasi",
-      icon: MessageSquare,
+      title: "Lapor Masalah",
+      description: "Sampaikan keluhan atau laporan",
+      icon: Bell,
       link: "/lapor",
-      color: "bg-orange-500",
     },
     {
-      title: "Lihat Kegiatan",
-      description: "Cek agenda kegiatan terbaru",
-      icon: Calendar,
+      title: "Info Kegiatan",
+      description: "Lihat jadwal kegiatan desa",
+      icon: CalendarDays,
       link: "/layanan/kegiatan",
-      color: "bg-purple-500",
     },
   ];
 
   const recentActivities = [
     {
       id: 1,
-      type: "surat",
-      title: "Surat Keterangan Domisili",
-      status: "Disetujui",
-      date: "2024-01-15",
-      statusColor: "text-green-600",
+      type: "Surat",
+      description: "Pengajuan Surat Keterangan Usaha Anda telah disetujui.",
+      date: "18 Juli 2024",
+      status: "success",
     },
     {
       id: 2,
-      type: "iuran",
-      title: "Iuran RT Januari 2024",
-      status: "Lunas",
-      date: "2024-01-10",
-      statusColor: "text-green-600",
+      type: "Iuran",
+      description: "Pembayaran Iuran Bulan Juli Anda berhasil.",
+      date: "15 Juli 2024",
+      status: "success",
     },
     {
       id: 3,
-      type: "laporan",
-      title: "Laporan Jalan Rusak",
-      status: "Dalam Proses",
-      date: "2024-01-08",
-      statusColor: "text-yellow-600",
+      type: "Laporan",
+      description: "Laporan Jalan Rusak Anda sedang dalam proses.",
+      date: "10 Juli 2024",
+      status: "info",
+    },
+    {
+      id: 4,
+      type: "Kegiatan",
+      description: "Pendaftaran kegiatan 'Kerja Bakti Lingkungan' dibuka.",
+      date: "05 Juli 2024",
+      status: "info",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-100">
       <Header />
-
-      <main className="container mx-auto px-4 py-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-green-800 mb-2">
-            Selamat datang, {user?.name}!
+      <main className="flex-grow py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-3xl font-bold text-gray-800 mb-6">
+            Dashboard Warga
           </h1>
-          <p className="text-green-600">
-            Kelola semua kebutuhan administrasi Anda di satu tempat
-          </p>
-        </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="card p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total Surat</p>
-                <p className="text-2xl font-bold text-green-800">
-                  {stats.totalSurat}
-                </p>
-              </div>
-              <FileText className="w-8 h-8 text-green-600" />
+          {/* Welcome Card */}
+          <div className="bg-gradient-to-r from-green-500 to-green-700 text-white p-6 rounded-lg shadow-md mb-8 flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-semibold mb-2">
+                Selamat Datang, Warga SIPEDES!
+              </h2>
+              <p className="text-green-100">
+                Akses berbagai layanan desa dengan mudah di sini.
+              </p>
             </div>
-            <div className="mt-2 text-sm text-gray-500">
-              {stats.suratProses} dalam proses
-            </div>
+            <User size={48} className="text-green-200 opacity-75" />
           </div>
 
-          <div className="card p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Iuran Bulan Ini</p>
-                <p className="text-2xl font-bold text-green-800">
-                  Rp {stats.iuranLunas.toLocaleString()}
-                </p>
-              </div>
-              <CreditCard className="w-8 h-8 text-green-600" />
-            </div>
-            <div className="mt-2 text-sm text-gray-500">
-              {stats.iuranTunggak > 0
-                ? `Tunggakan: Rp ${stats.iuranTunggak.toLocaleString()}`
-                : "Lunas"}
-            </div>
-          </div>
-
-          <div className="card p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Laporan</p>
-                <p className="text-2xl font-bold text-green-800">
-                  {stats.totalLaporan}
-                </p>
-              </div>
-              <MessageSquare className="w-8 h-8 text-green-600" />
-            </div>
-            <div className="mt-2 text-sm text-gray-500">
-              {stats.laporanProses} dalam proses
-            </div>
-          </div>
-
-          <div className="card p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Status Akun</p>
-                <p className="text-lg font-bold text-green-800">Aktif</p>
-              </div>
-              <CheckCircle className="w-8 h-8 text-green-600" />
-            </div>
-            <div className="mt-2 text-sm text-gray-500">Terverifikasi RT</div>
-          </div>
-        </div>
-
-        <div className="grid lg:grid-cols-3 gap-8">
           {/* Quick Actions */}
-          <div className="lg:col-span-2">
-            <h2 className="text-xl font-bold text-green-800 mb-6">
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
               Aksi Cepat
             </h2>
-            <div className="grid md:grid-cols-2 gap-4 mb-8">
-              {quickActions.map((action, index) => {
-                const Icon = action.icon;
-                return (
-                  <div
-                    key={index}
-                    className="card p-6 hover:shadow-lg transition-shadow cursor-pointer"
-                  >
-                    <div className="flex items-start space-x-4">
-                      <div
-                        className={`w-12 h-12 ${action.color} rounded-lg flex items-center justify-center`}
-                      >
-                        <Icon className="w-6 h-6 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-green-800 mb-1">
-                          {action.title}
-                        </h3>
-                        <p className="text-sm text-gray-600">
-                          {action.description}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Recent Activities */}
-            <h2 className="text-xl font-bold text-green-800 mb-6">
-              Aktivitas Terbaru
-            </h2>
-            <div className="card">
-              <div className="p-6">
-                <div className="space-y-4">
-                  {recentActivities.map((activity) => (
-                    <div
-                      key={activity.id}
-                      className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0"
-                    >
-                      <div className="flex items-center space-x-3">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <div>
-                          <p className="font-medium text-green-800">
-                            {activity.title}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            {activity.date}
-                          </p>
-                        </div>
-                      </div>
-                      <span
-                        className={`text-sm font-medium ${activity.statusColor}`}
-                      >
-                        {activity.status}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {quickActions.map((action, index) => (
+                <Link
+                  key={index}
+                  to={action.link}
+                  className="card p-6 flex flex-col items-center text-center hover:bg-green-50 transition-colors duration-200"
+                >
+                  <action.icon className="h-12 w-12 text-green-600 mb-3" />
+                  <h3 className="text-lg font-semibold text-gray-800 mb-1">
+                    {action.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm">{action.description}</p>
+                </Link>
+              ))}
             </div>
           </div>
 
-          {/* Profile & Notifications */}
-          <div>
-            {/* Profile Card */}
-            <div className="card p-6 mb-6">
-              <h3 className="font-semibold text-green-800 mb-4">Profil Saya</h3>
-              <div className="space-y-3">
-                <div>
-                  <p className="text-sm text-gray-600">Nama</p>
-                  <p className="font-medium text-green-800">{user?.name}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Telepon</p>
-                  <p className="font-medium text-green-800">{user?.phone}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">RT</p>
-                  <p className="font-medium text-green-800">{user?.rt_id}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Status</p>
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    <CheckCircle className="w-3 h-3 mr-1" />
-                    Terverifikasi
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Notifications */}
-            <div className="card p-6">
-              <h3 className="font-semibold text-green-800 mb-4">Notifikasi</h3>
-              <div className="space-y-3">
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+          {/* Recent Activities */}
+          <div className="card p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              Aktivitas Terbaru Anda
+            </h2>
+            <ul className="space-y-4">
+              {recentActivities.map((activity) => (
+                <li key={activity.id} className="flex items-start space-x-3">
+                  {activity.status === "success" && (
+                    <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-1" />
+                  )}
+                  {activity.status === "info" && (
+                    <Bell className="h-5 w-5 text-blue-500 flex-shrink-0 mt-1" />
+                  )}
                   <div>
-                    <p className="text-sm text-green-800">
-                      Surat domisili Anda telah disetujui
+                    <p className="text-gray-800 font-medium">
+                      <span className="font-semibold">{activity.type}:</span>{" "}
+                      {activity.description}
                     </p>
-                    <p className="text-xs text-gray-500">2 jam yang lalu</p>
+                    <p className="text-gray-500 text-sm">{activity.date}</p>
                   </div>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                  <div>
-                    <p className="text-sm text-green-800">
-                      Pembayaran iuran berhasil
-                    </p>
-                    <p className="text-xs text-gray-500">1 hari yang lalu</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
-                  <div>
-                    <p className="text-sm text-green-800">
-                      Gotong royong besok pagi
-                    </p>
-                    <p className="text-xs text-gray-500">2 hari yang lalu</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+                </li>
+              ))}
+            </ul>
+            {recentActivities.length === 0 && (
+              <p className="text-center text-gray-500 mt-4">
+                Tidak ada aktivitas terbaru.
+              </p>
+            )}
           </div>
         </div>
       </main>
-
       <Footer />
     </div>
   );

@@ -2,65 +2,74 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Card from "../../components/card/Card";
-import PasswordInput from "../../components/passwordInput/PasswordInput";
-import { validateEmail, showToast } from "../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import {
   loginStart,
   loginSuccess,
   loginFailure,
 } from "../../redux/auth/authSlice";
-import { ThreeDots } from "react-loader-spinner"; // Import spinner
+import Card from "../../components/card/Card";
+import PasswordInput from "../../components/passwordInput/PasswordInput";
+import { showToast, validateEmail } from "../../utils";
+import { ThreeDots } from "react-loader-spinner";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { isLoading } = useSelector((state) => state.auth);
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     if (!email || !password) {
-      return showToast("Please fill in all fields", "error");
+      showToast("Email dan password harus diisi.", "error");
+      return;
     }
 
     if (!validateEmail(email)) {
-      return showToast("Please enter a valid email", "error");
+      showToast("Format email tidak valid.", "error");
+      return;
     }
 
     dispatch(loginStart());
     try {
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      if (email === "test@example.com" && password === "password123") {
-        dispatch(
-          loginSuccess({ user: { email, role: "warga" }, token: "mock_token" })
-        );
-        showToast("Login successful!", "success");
-        navigate("/dashboard"); // Redirect to dashboard after successful login
+      // Simulate successful login
+      if (email === "warga@example.com" && password === "password123") {
+        dispatch(loginSuccess({ email, role: "warga" }));
+        showToast("Login berhasil sebagai Warga!", "success");
+        navigate("/dashboard/warga");
+      } else if (email === "rt@example.com" && password === "password123") {
+        dispatch(loginSuccess({ email, role: "rt" }));
+        showToast("Login berhasil sebagai Ketua RT!", "success");
+        navigate("/dashboard/rt");
+      } else if (email === "dukuh@example.com" && password === "password123") {
+        dispatch(loginSuccess({ email, role: "dukuh" }));
+        showToast("Login berhasil sebagai Kepala Dukuh!", "success");
+        navigate("/dashboard/dukuh");
       } else {
-        dispatch(loginFailure("Invalid credentials"));
-        showToast("Invalid email or password", "error");
+        dispatch(loginFailure("Email atau password salah."));
+        showToast("Email atau password salah.", "error");
       }
     } catch (error) {
-      dispatch(loginFailure(error.message));
-      showToast("An error occurred during login", "error");
+      dispatch(loginFailure("Terjadi kesalahan saat login."));
+      showToast("Terjadi kesalahan saat login.", "error");
     }
   };
 
   return (
     <div className="auth-container">
       <Card className="auth-form-card">
-        <h2 className="auth-form-title">Login</h2>
+        <h2 className="auth-form-title">Login SIPEDES</h2>
         <form onSubmit={handleLogin}>
           <div className="mb-4">
             <label
               htmlFor="email"
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-sm font-medium text-gray-700 mb-2"
             >
               Email
             </label>
@@ -68,42 +77,42 @@ const LoginPage = () => {
               type="email"
               id="email"
               name="email"
-              placeholder="Your Email"
-              required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="auth-form-input"
+              placeholder="Masukkan email Anda"
+              required
             />
           </div>
           <div className="mb-6">
             <label
               htmlFor="password"
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-sm font-medium text-gray-700 mb-2"
             >
               Password
             </label>
             <PasswordInput
-              placeholder="Password"
-              name="password"
+              placeholder="Masukkan password Anda"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              name="password"
             />
           </div>
           <button
             type="submit"
-            className="auth-submit-button flex items-center justify-center"
+            className="auth-submit-button"
             disabled={isLoading}
           >
             {isLoading ? (
               <ThreeDots
+                visible={true}
                 height="20"
-                width="20"
-                radius="9"
+                width="40"
                 color="#ffffff"
+                radius="9"
                 ariaLabel="three-dots-loading"
                 wrapperStyle={{}}
-                wrapperClassName=""
-                visible={true}
+                wrapperClass=""
               />
             ) : (
               "Login"
@@ -111,8 +120,8 @@ const LoginPage = () => {
           </button>
         </form>
         <div className="auth-register-link">
-          <p>Don't have an account?</p>
-          <Link to="/register">Register</Link>
+          <p>Belum punya akun?</p>
+          <Link to="/register">Daftar Sekarang</Link>
         </div>
       </Card>
     </div>

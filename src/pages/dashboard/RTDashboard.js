@@ -1,264 +1,227 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useAuth } from "../../contexts/AuthContext";
+import { useState } from "react";
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
 import {
   Users,
   FileText,
-  CreditCard,
+  DollarSign,
   CheckCircle,
-  Clock,
-  Plus,
+  XCircle,
   Eye,
   Edit,
   Trash2,
+  PlusCircle,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const RTDashboard = () => {
-  const { user } = useAuth();
-  const [stats, setStats] = useState({
-    totalWarga: 0,
-    suratPending: 0,
-    suratVerified: 0,
-    laporanBaru: 0,
-    kasRT: 0,
-    iuranTerkumpul: 0,
-    iuranTarget: 0,
-  });
+  const [activeTab, setActiveTab] = useState("warga"); // 'warga', 'surat', 'kas'
 
-  const [wargaList, setWargaList] = useState([]);
-  const [suratList, setSuratList] = useState([]);
-  const [kasTransaksi, setKasTransaksi] = useState([]);
-  const [activeTab, setActiveTab] = useState("warga");
-
-  useEffect(() => {
-    // Simulate loading data
-    setTimeout(() => {
-      setStats({
-        totalWarga: 245,
-        suratPending: 5,
-        suratVerified: 23,
-        laporanBaru: 2,
-        kasRT: 2450000,
-        iuranTerkumpul: 2100000,
-        iuranTarget: 2450000,
-      });
-
-      setWargaList([
-        {
-          id: 1,
-          nama: "Budi Santoso",
-          nik: "3404012345678901",
-          alamat: "Jl. Kaliurang KM 7 No. 10",
-          phone: "081234567890",
-          status: "aktif",
-          iuranStatus: "lunas",
-        },
-        {
-          id: 2,
-          nama: "Siti Rahayu",
-          nik: "3404012345678902",
-          alamat: "Jl. Kaliurang KM 7 No. 12",
-          phone: "081234567891",
-          status: "aktif",
-          iuranStatus: "tunggak",
-        },
-        {
-          id: 3,
-          nama: "Ahmad Wijaya",
-          nik: "3404012345678903",
-          alamat: "Jl. Kaliurang KM 7 No. 25",
-          phone: "081234567892",
-          status: "aktif",
-          iuranStatus: "lunas",
-        },
-      ]);
-
-      setSuratList([
-        {
-          id: 1,
-          pemohon: "Budi Santoso",
-          jenis: "Surat Keterangan Domisili",
-          tanggal: "2024-01-20",
-          status: "pending",
-          keperluan: "Untuk keperluan bank",
-        },
-        {
-          id: 2,
-          pemohon: "Siti Rahayu",
-          jenis: "Surat Pengantar Nikah",
-          tanggal: "2024-01-19",
-          status: "verified",
-          keperluan: "Untuk menikah",
-        },
-      ]);
-
-      setKasTransaksi([
-        {
-          id: 1,
-          tanggal: "2024-01-20",
-          jenis: "pemasukan",
-          kategori: "Iuran Ronda",
-          deskripsi: "Iuran ronda bulan Januari",
-          nominal: 100000,
-        },
-        {
-          id: 2,
-          tanggal: "2024-01-19",
-          jenis: "pengeluaran",
-          kategori: "Konsumsi",
-          deskripsi: "Konsumsi rapat RT",
-          nominal: 75000,
-        },
-      ]);
-    }, 1000);
-  }, []);
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "pending":
-        return "text-yellow-600 bg-yellow-100";
-      case "verified":
-        return "text-blue-600 bg-blue-100";
-      case "approved":
-        return "text-green-600 bg-green-100";
-      case "rejected":
-        return "text-red-600 bg-red-100";
-      case "aktif":
-        return "text-green-600 bg-green-100";
-      case "lunas":
-        return "text-green-600 bg-green-100";
-      case "tunggak":
-        return "text-red-600 bg-red-100";
-      default:
-        return "text-gray-600 bg-gray-100";
-    }
-  };
-
-  const tabs = [
-    { id: "warga", label: "Data Warga", icon: Users },
-    { id: "surat", label: "Permohonan Surat", icon: FileText },
-    { id: "kas", label: "Kas RT", icon: CreditCard },
+  // Mock Data for RT Dashboard
+  const stats = [
+    {
+      title: "Total Warga",
+      value: "320",
+      icon: Users,
+      color: "text-green-600",
+    },
+    {
+      title: "Surat Pending",
+      value: "3",
+      icon: FileText,
+      color: "text-yellow-600",
+    },
+    {
+      title: "Kas RT",
+      value: "Rp 1.250.000",
+      icon: DollarSign,
+      color: "text-blue-600",
+    },
   ];
 
+  const wargaData = [
+    {
+      id: 1,
+      name: "Budi Santoso",
+      address: "Jl. Mawar No. 10",
+      status: "Aktif",
+      iuran: "Lunas",
+    },
+    {
+      id: 2,
+      name: "Siti Aminah",
+      address: "Jl. Mawar No. 12",
+      status: "Aktif",
+      iuran: "Belum Lunas",
+    },
+    {
+      id: 3,
+      name: "Joko Susilo",
+      address: "Jl. Melati No. 5",
+      status: "Aktif",
+      iuran: "Lunas",
+    },
+    {
+      id: 4,
+      name: "Dewi Lestari",
+      address: "Jl. Anggrek No. 8",
+      status: "Aktif",
+      iuran: "Lunas",
+    },
+    {
+      id: 5,
+      name: "Agus Salim",
+      address: "Jl. Mawar No. 15",
+      status: "Aktif",
+      iuran: "Belum Lunas",
+    },
+  ];
+
+  const suratPermohonan = [
+    {
+      id: 1,
+      type: "Surat Keterangan Usaha",
+      applicant: "Rina Fitri",
+      date: "18 Juli 2024",
+      status: "Pending",
+    },
+    {
+      id: 2,
+      type: "Surat Domisili",
+      applicant: "Fajar Nugroho",
+      date: "17 Juli 2024",
+      status: "Pending",
+    },
+    {
+      id: 3,
+      type: "Surat Keterangan Kematian",
+      applicant: "Hartono",
+      date: "15 Juli 2024",
+      status: "Disetujui",
+    },
+  ];
+
+  const kasRTData = [
+    {
+      id: 1,
+      date: "01 Juli 2024",
+      description: "Saldo Awal Bulan",
+      type: "Pemasukan",
+      amount: 1000000,
+    },
+    {
+      id: 2,
+      date: "05 Juli 2024",
+      description: "Iuran Warga Juli",
+      type: "Pemasukan",
+      amount: 250000,
+    },
+    {
+      id: 3,
+      date: "10 Juli 2024",
+      description: "Pembelian Alat Kebersihan",
+      type: "Pengeluaran",
+      amount: 75000,
+    },
+    {
+      id: 4,
+      date: "15 Juli 2024",
+      description: "Iuran Warga Juli",
+      type: "Pemasukan",
+      amount: 100000,
+    },
+  ];
+
+  const calculateKasSaldo = () => {
+    return kasRTData.reduce((acc, item) => {
+      return item.type === "Pemasukan" ? acc + item.amount : acc - item.amount;
+    }, 0);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-100">
       <Header />
-
-      <main className="container mx-auto px-4 py-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-green-800 mb-2">
-            Dashboard RT
+      <main className="flex-grow py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-3xl font-bold text-gray-800 mb-6">
+            Dashboard Ketua RT
           </h1>
-          <p className="text-green-600">
-            Selamat datang, {user?.name} - Kelola warga dan administrasi RT
-          </p>
-        </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="card p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total Warga</p>
-                <p className="text-3xl font-bold text-green-800">
-                  {stats.totalWarga}
-                </p>
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {stats.map((stat, index) => (
+              <div key={index} className="card p-6 flex items-center space-x-4">
+                <div
+                  className={`p-3 rounded-full bg-opacity-20 ${stat.color.replace(
+                    "text-",
+                    "bg-"
+                  )}`}
+                >
+                  <stat.icon className={`h-8 w-8 ${stat.color}`} />
+                </div>
+                <div>
+                  <p className="text-gray-500 text-sm">{stat.title}</p>
+                  <h2 className="text-2xl font-bold text-gray-800">
+                    {stat.value}
+                  </h2>
+                </div>
               </div>
-              <Users className="w-10 h-10 text-green-600" />
-            </div>
-            <div className="mt-2 text-sm text-gray-500">Warga aktif RT</div>
+            ))}
           </div>
 
-          <div className="card p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Surat Pending</p>
-                <p className="text-3xl font-bold text-yellow-600">
-                  {stats.suratPending}
-                </p>
-              </div>
-              <Clock className="w-10 h-10 text-yellow-600" />
+          {/* Tabs Navigation */}
+          <div className="bg-white rounded-lg shadow-sm mb-6">
+            <div className="flex border-b border-gray-200">
+              <button
+                className={`py-3 px-6 text-lg font-medium ${
+                  activeTab === "warga"
+                    ? "text-green-700 border-b-2 border-green-700"
+                    : "text-gray-600 hover:text-green-700"
+                }`}
+                onClick={() => setActiveTab("warga")}
+              >
+                Data Warga
+              </button>
+              <button
+                className={`py-3 px-6 text-lg font-medium ${
+                  activeTab === "surat"
+                    ? "text-green-700 border-b-2 border-green-700"
+                    : "text-gray-600 hover:text-green-700"
+                }`}
+                onClick={() => setActiveTab("surat")}
+              >
+                Permohonan Surat
+              </button>
+              <button
+                className={`py-3 px-6 text-lg font-medium ${
+                  activeTab === "kas"
+                    ? "text-green-700 border-b-2 border-green-700"
+                    : "text-gray-600 hover:text-green-700"
+                }`}
+                onClick={() => setActiveTab("kas")}
+              >
+                Kas RT
+              </button>
             </div>
-            <div className="mt-2 text-sm text-gray-500">
-              {stats.suratVerified} telah diverifikasi
-            </div>
-          </div>
-
-          <div className="card p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Kas RT</p>
-                <p className="text-2xl font-bold text-green-800">
-                  Rp {stats.kasRT.toLocaleString()}
-                </p>
-              </div>
-              <CreditCard className="w-10 h-10 text-green-600" />
-            </div>
-            <div className="mt-2 text-sm text-gray-500">Saldo saat ini</div>
-          </div>
-
-          <div className="card p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Iuran Terkumpul</p>
-                <p className="text-2xl font-bold text-green-800">
-                  {((stats.iuranTerkumpul / stats.iuranTarget) * 100).toFixed(
-                    0
-                  )}
-                  %
-                </p>
-              </div>
-              <CheckCircle className="w-10 h-10 text-green-600" />
-            </div>
-            <div className="mt-2 text-sm text-gray-500">
-              Rp {stats.iuranTerkumpul.toLocaleString()} dari target
-            </div>
-          </div>
-        </div>
-
-        {/* Tab Navigation */}
-        <div className="card mb-8">
-          <div className="border-b border-gray-200">
-            <nav className="flex space-x-8 px-6">
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm ${
-                      activeTab === tab.id
-                        ? "border-green-500 text-green-600"
-                        : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span>{tab.label}</span>
-                  </button>
-                );
-              })}
-            </nav>
           </div>
 
           {/* Tab Content */}
-          <div className="p-6">
-            {/* Data Warga Tab */}
+          <div className="card p-6">
             {activeTab === "warga" && (
               <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-green-800">
-                    Data Warga RT
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold text-gray-800">
+                    Data Warga RT Anda
                   </h2>
-                  <button className="btn-primary flex items-center space-x-2">
-                    <Plus className="w-4 h-4" />
-                    <span>Tambah Warga</span>
-                  </button>
+                  <Link
+                    to="/dashboard/rt/add-warga"
+                    className="btn-primary flex items-center gap-2"
+                  >
+                    <PlusCircle size={20} /> Tambah Warga
+                  </Link>
                 </div>
-
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
@@ -267,13 +230,13 @@ const RTDashboard = () => {
                           Nama
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          NIK
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Alamat
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Status Iuran
+                          Status
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Iuran
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Aksi
@@ -281,211 +244,229 @@ const RTDashboard = () => {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {wargaList.map((warga) => (
-                        <tr key={warga.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div>
-                              <div className="text-sm font-medium text-gray-900">
-                                {warga.nama}
-                              </div>
-                              <div className="text-sm text-gray-500">
-                                {warga.phone}
-                              </div>
-                            </div>
+                      {wargaData.map((warga) => (
+                        <tr key={warga.id}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {warga.name}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {warga.nik}
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                            {warga.address}
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-900">
-                            {warga.alamat}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span
-                              className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
-                                warga.iuranStatus
-                              )}`}
-                            >
-                              {warga.iuranStatus === "lunas"
-                                ? "Lunas"
-                                : "Tunggak"}
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                              {warga.status}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <div className="flex space-x-2">
-                              <button className="text-green-600 hover:text-green-900">
-                                <Eye className="w-4 h-4" />
-                              </button>
-                              <button className="text-blue-600 hover:text-blue-900">
-                                <Edit className="w-4 h-4" />
-                              </button>
-                              <button className="text-red-600 hover:text-red-900">
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            <span
+                              className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                warga.iuran === "Lunas"
+                                  ? "bg-green-100 text-green-800"
+                                  : "bg-red-100 text-red-800"
+                              }`}
+                            >
+                              {warga.iuran}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
+                            <button className="text-blue-600 hover:text-blue-900 mr-3">
+                              <Eye size={20} />
+                            </button>
+                            <button className="text-yellow-600 hover:text-yellow-900 mr-3">
+                              <Edit size={20} />
+                            </button>
+                            <button className="text-red-600 hover:text-red-900">
+                              <Trash2 size={20} />
+                            </button>
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
+                {wargaData.length === 0 && (
+                  <p className="text-center text-gray-500 mt-4">
+                    Tidak ada data warga.
+                  </p>
+                )}
               </div>
             )}
 
-            {/* Permohonan Surat Tab */}
             {activeTab === "surat" && (
               <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-green-800">
-                    Permohonan Surat
-                  </h2>
-                  <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
-                    {stats.suratPending} Pending
-                  </span>
-                </div>
-
-                <div className="space-y-4">
-                  {suratList.map((surat) => (
-                    <div
-                      key={surat.id}
-                      className="border border-gray-200 rounded-lg p-6"
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-start space-x-4">
-                          <FileText className="w-8 h-8 text-green-600 mt-1" />
-                          <div className="flex-1">
-                            <h3 className="font-medium text-green-800 mb-1">
-                              {surat.jenis}
-                            </h3>
-                            <p className="text-sm text-gray-600 mb-1">
-                              Pemohon: {surat.pemohon}
-                            </p>
-                            <p className="text-sm text-gray-600 mb-1">
-                              Keperluan: {surat.keperluan}
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              Tanggal: {surat.tanggal}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex flex-col items-end space-y-2">
-                          <span
-                            className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                              surat.status
-                            )}`}
-                          >
-                            {surat.status === "pending"
-                              ? "Pending"
-                              : surat.status === "verified"
-                              ? "Terverifikasi"
-                              : "Disetujui"}
-                          </span>
-                          {surat.status === "pending" && (
-                            <div className="flex space-x-2">
-                              <button className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700">
-                                Verifikasi
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                  Permohonan Surat Warga
+                </h2>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Jenis Surat
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Pemohon
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Tanggal
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Status
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Aksi
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {suratPermohonan.map((surat) => (
+                        <tr key={surat.id}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {surat.type}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                            {surat.applicant}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                            {surat.date}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            <span
+                              className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                surat.status === "Pending"
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : "bg-green-100 text-green-800"
+                              }`}
+                            >
+                              {surat.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
+                            {surat.status === "Pending" ? (
+                              <>
+                                <button className="text-green-600 hover:text-green-900 mr-3">
+                                  <CheckCircle size={20} />
+                                </button>
+                                <button className="text-red-600 hover:text-red-900">
+                                  <XCircle size={20} />
+                                </button>
+                              </>
+                            ) : (
+                              <button className="text-blue-600 hover:text-blue-900">
+                                <Eye size={20} />
                               </button>
-                              <button className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700">
-                                Tolak
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
+                {suratPermohonan.length === 0 && (
+                  <p className="text-center text-gray-500 mt-4">
+                    Tidak ada permohonan surat.
+                  </p>
+                )}
               </div>
             )}
 
-            {/* Kas RT Tab */}
             {activeTab === "kas" && (
               <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-green-800">Kas RT</h2>
-                  <div className="flex space-x-2">
-                    <button className="btn-secondary">Laporan Bulanan</button>
-                    <button className="btn-primary flex items-center space-x-2">
-                      <Plus className="w-4 h-4" />
-                      <span>Tambah Transaksi</span>
-                    </button>
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold text-gray-800">
+                    Laporan Kas RT
+                  </h2>
+                  <Link
+                    to="/dashboard/rt/add-transaction"
+                    className="btn-primary flex items-center gap-2"
+                  >
+                    <PlusCircle size={20} /> Tambah Transaksi
+                  </Link>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                  <div className="bg-blue-50 p-4 rounded-lg text-center">
+                    <p className="text-blue-700 text-sm">Saldo Saat Ini</p>
+                    <h3 className="text-2xl font-bold text-blue-800">
+                      Rp {calculateKasSaldo().toLocaleString("id-ID")}
+                    </h3>
+                  </div>
+                  <div className="bg-green-50 p-4 rounded-lg text-center">
+                    <p className="text-green-700 text-sm">Total Pemasukan</p>
+                    <h3 className="text-2xl font-bold text-green-800">
+                      Rp{" "}
+                      {kasRTData
+                        .filter((item) => item.type === "Pemasukan")
+                        .reduce((sum, item) => sum + item.amount, 0)
+                        .toLocaleString("id-ID")}
+                    </h3>
+                  </div>
+                  <div className="bg-red-50 p-4 rounded-lg text-center">
+                    <p className="text-red-700 text-sm">Total Pengeluaran</p>
+                    <h3 className="text-2xl font-bold text-red-800">
+                      Rp{" "}
+                      {kasRTData
+                        .filter((item) => item.type === "Pengeluaran")
+                        .reduce((sum, item) => sum + item.amount, 0)
+                        .toLocaleString("id-ID")}
+                    </h3>
                   </div>
                 </div>
-
-                {/* Saldo Summary */}
-                <div className="grid md:grid-cols-3 gap-4 mb-6">
-                  <div className="card p-4">
-                    <p className="text-sm text-gray-600">Saldo Saat Ini</p>
-                    <p className="text-2xl font-bold text-green-800">
-                      Rp {stats.kasRT.toLocaleString()}
-                    </p>
-                  </div>
-                  <div className="card p-4">
-                    <p className="text-sm text-gray-600">Pemasukan Bulan Ini</p>
-                    <p className="text-2xl font-bold text-blue-800">
-                      Rp 2,100,000
-                    </p>
-                  </div>
-                  <div className="card p-4">
-                    <p className="text-sm text-gray-600">
-                      Pengeluaran Bulan Ini
-                    </p>
-                    <p className="text-2xl font-bold text-red-800">
-                      Rp 350,000
-                    </p>
-                  </div>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Tanggal
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Deskripsi
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Jenis
+                        </th>
+                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Jumlah (Rp)
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {kasRTData.map((item) => (
+                        <tr key={item.id}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {item.date}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                            {item.description}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            <span
+                              className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                item.type === "Pemasukan"
+                                  ? "bg-green-100 text-green-800"
+                                  : "bg-red-100 text-red-800"
+                              }`}
+                            >
+                              {item.type}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-600">
+                            {item.amount.toLocaleString("id-ID")}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-
-                {/* Transaksi Terbaru */}
-                <div className="space-y-4">
-                  <h3 className="font-semibold text-green-800">
-                    Transaksi Terbaru
-                  </h3>
-                  {kasTransaksi.map((transaksi) => (
-                    <div
-                      key={transaksi.id}
-                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-                    >
-                      <div className="flex items-center space-x-4">
-                        <div
-                          className={`w-3 h-3 rounded-full ${
-                            transaksi.jenis === "pemasukan"
-                              ? "bg-green-500"
-                              : "bg-red-500"
-                          }`}
-                        ></div>
-                        <div>
-                          <p className="font-medium text-green-800">
-                            {transaksi.deskripsi}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            Kategori: {transaksi.kategori}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {transaksi.tanggal}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p
-                          className={`font-bold ${
-                            transaksi.jenis === "pemasukan"
-                              ? "text-green-600"
-                              : "text-red-600"
-                          }`}
-                        >
-                          {transaksi.jenis === "pemasukan" ? "+" : "-"}Rp{" "}
-                          {transaksi.nominal.toLocaleString()}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                {kasRTData.length === 0 && (
+                  <p className="text-center text-gray-500 mt-4">
+                    Tidak ada transaksi kas RT.
+                  </p>
+                )}
               </div>
             )}
           </div>
         </div>
       </main>
-
       <Footer />
     </div>
   );

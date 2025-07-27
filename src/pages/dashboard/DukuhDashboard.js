@@ -1,432 +1,381 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { useAuth } from "../../contexts/AuthContext";
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
 import {
   Users,
   FileText,
-  MessageSquare,
-  CreditCard,
-  Clock,
-  TrendingUp,
-  Calendar,
+  DollarSign,
+  Bell,
+  CheckCircle,
+  XCircle,
+  CalendarDays,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const DukuhDashboard = () => {
-  const { user } = useAuth();
-  const [stats, setStats] = useState({
-    totalWarga: 0,
-    totalRT: 0,
-    suratPending: 0,
-    suratApproved: 0,
-    laporanBaru: 0,
-    laporanProses: 0,
-    totalIuran: 0,
-    iuranTerkumpul: 0,
-    kegiatanAktif: 0,
-  });
+  // Mock Data for Dukuh Dashboard
+  const stats = [
+    {
+      title: "Total Warga",
+      value: "1.250",
+      icon: Users,
+      color: "text-green-600",
+    },
+    {
+      title: "Surat Pending",
+      value: "12",
+      icon: FileText,
+      color: "text-yellow-600",
+    },
+    { title: "Laporan Baru", value: "5", icon: Bell, color: "text-red-600" },
+    {
+      title: "Iuran Terkumpul",
+      value: "Rp 15.000.000",
+      icon: DollarSign,
+      color: "text-blue-600",
+    },
+  ];
 
-  const [recentSurat, setRecentSurat] = useState([]);
-  const [recentLaporan, setRecentLaporan] = useState([]);
-  const [rtStats, setRtStats] = useState([]);
+  const pendingLetters = [
+    {
+      id: 1,
+      type: "Surat Keterangan Usaha",
+      applicant: "Budi Santoso",
+      rt: "RT 01",
+      status: "Pending",
+    },
+    {
+      id: 2,
+      type: "Surat Domisili",
+      applicant: "Siti Aminah",
+      rt: "RT 02",
+      status: "Pending",
+    },
+    {
+      id: 3,
+      type: "Surat Keterangan Tidak Mampu",
+      applicant: "Joko Susilo",
+      rt: "RT 01",
+      status: "Pending",
+    },
+  ];
 
-  useEffect(() => {
-    // Simulate loading data
-    setTimeout(() => {
-      setStats({
-        totalWarga: 1247,
-        totalRT: 5,
-        suratPending: 12,
-        suratApproved: 45,
-        laporanBaru: 8,
-        laporanProses: 3,
-        totalIuran: 18705000,
-        iuranTerkumpul: 15240000,
-        kegiatanAktif: 4,
-      });
+  const recentReports = [
+    {
+      id: 1,
+      title: "Jalan Rusak di RT 03",
+      reporter: "Agus Salim",
+      status: "Baru",
+      priority: "Tinggi",
+    },
+    {
+      id: 2,
+      title: "Sampah Menumpuk di TPS RT 02",
+      reporter: "Dewi Lestari",
+      status: "Baru",
+      priority: "Sedang",
+    },
+  ];
 
-      setRecentSurat([
-        {
-          id: 1,
-          pemohon: "Budi Santoso",
-          jenis: "Surat Keterangan Domisili",
-          rt: "RT 001",
-          tanggal: "2024-01-20",
-          status: "pending",
-        },
-        {
-          id: 2,
-          pemohon: "Siti Rahayu",
-          jenis: "Surat Pengantar Nikah",
-          rt: "RT 002",
-          tanggal: "2024-01-19",
-          status: "pending",
-        },
-        {
-          id: 3,
-          pemohon: "Ahmad Wijaya",
-          jenis: "Surat Keterangan Usaha",
-          rt: "RT 001",
-          tanggal: "2024-01-18",
-          status: "approved",
-        },
-      ]);
+  const rtPerformance = [
+    {
+      rt: "RT 01",
+      warga: 300,
+      suratApproved: 50,
+      iuranCollected: "Rp 4.5 Juta",
+    },
+    {
+      rt: "RT 02",
+      warga: 320,
+      suratApproved: 45,
+      iuranCollected: "Rp 4.8 Juta",
+    },
+    {
+      rt: "RT 03",
+      warga: 310,
+      suratApproved: 48,
+      iuranCollected: "Rp 4.2 Juta",
+    },
+    {
+      rt: "RT 04",
+      warga: 320,
+      suratApproved: 55,
+      iuranCollected: "Rp 5.0 Juta",
+    },
+  ];
 
-      setRecentLaporan([
-        {
-          id: 1,
-          pelapor: "Maria Sari",
-          judul: "Jalan Rusak di RT 003",
-          kategori: "Infrastruktur",
-          tanggal: "2024-01-20",
-          status: "baru",
-          prioritas: "tinggi",
-        },
-        {
-          id: 2,
-          pelapor: "Joko Susilo",
-          judul: "Sampah Menumpuk",
-          kategori: "Kebersihan",
-          tanggal: "2024-01-19",
-          status: "proses",
-          prioritas: "sedang",
-        },
-      ]);
-
-      setRtStats([
-        { rt: "RT 001", warga: 245, iuran: 85, laporan: 2 },
-        { rt: "RT 002", warga: 267, iuran: 92, laporan: 1 },
-        { rt: "RT 003", warga: 234, iuran: 78, laporan: 3 },
-        { rt: "RT 004", warga: 256, iuran: 88, laporan: 1 },
-        { rt: "RT 005", warga: 245, iuran: 81, laporan: 1 },
-      ]);
-    }, 1000);
-  }, []);
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "pending":
-        return "text-yellow-600 bg-yellow-100";
-      case "approved":
-        return "text-green-600 bg-green-100";
-      case "rejected":
-        return "text-red-600 bg-red-100";
-      case "baru":
-        return "text-blue-600 bg-blue-100";
-      case "proses":
-        return "text-orange-600 bg-orange-100";
-      case "selesai":
-        return "text-green-600 bg-green-100";
-      default:
-        return "text-gray-600 bg-gray-100";
-    }
-  };
-
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case "tinggi":
-        return "text-red-600";
-      case "sedang":
-        return "text-yellow-600";
-      case "rendah":
-        return "text-green-600";
-      default:
-        return "text-gray-600";
-    }
-  };
+  const upcomingActivities = [
+    {
+      id: 1,
+      name: "Rapat Koordinasi Dukuh & RT",
+      date: "20 Juli 2024",
+      time: "09:00",
+      location: "Balai Desa",
+    },
+    {
+      id: 2,
+      name: "Sosialisasi Program Ketahanan Pangan",
+      date: "25 Juli 2024",
+      time: "14:00",
+      location: "Aula Desa",
+    },
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-100">
       <Header />
-
-      <main className="container mx-auto px-4 py-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-green-800 mb-2">
-            Dashboard Dukuh
+      <main className="flex-grow py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-3xl font-bold text-gray-800 mb-6">
+            Dashboard Kepala Dukuh
           </h1>
-          <p className="text-green-600">
-            Selamat datang, {user?.name} - Kelola seluruh aktivitas padukuhan
-          </p>
-        </div>
 
-        {/* Main Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="card p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total Warga</p>
-                <p className="text-3xl font-bold text-green-800">
-                  {stats.totalWarga}
-                </p>
-              </div>
-              <Users className="w-10 h-10 text-green-600" />
-            </div>
-            <div className="mt-2 text-sm text-gray-500">
-              Tersebar di {stats.totalRT} RT
-            </div>
-          </div>
-
-          <div className="card p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Surat Pending</p>
-                <p className="text-3xl font-bold text-yellow-600">
-                  {stats.suratPending}
-                </p>
-              </div>
-              <Clock className="w-10 h-10 text-yellow-600" />
-            </div>
-            <div className="mt-2 text-sm text-gray-500">
-              {stats.suratApproved} telah disetujui
-            </div>
-          </div>
-
-          <div className="card p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Laporan Baru</p>
-                <p className="text-3xl font-bold text-blue-600">
-                  {stats.laporanBaru}
-                </p>
-              </div>
-              <MessageSquare className="w-10 h-10 text-blue-600" />
-            </div>
-            <div className="mt-2 text-sm text-gray-500">
-              {stats.laporanProses} dalam proses
-            </div>
-          </div>
-
-          <div className="card p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Iuran Terkumpul</p>
-                <p className="text-2xl font-bold text-green-800">
-                  {((stats.iuranTerkumpul / stats.totalIuran) * 100).toFixed(0)}
-                  %
-                </p>
-              </div>
-              <TrendingUp className="w-10 h-10 text-green-600" />
-            </div>
-            <div className="mt-2 text-sm text-gray-500">
-              Rp {stats.iuranTerkumpul.toLocaleString()} dari Rp{" "}
-              {stats.totalIuran.toLocaleString()}
-            </div>
-          </div>
-        </div>
-
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left Column */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Permohonan Surat Pending */}
-            <div className="card">
-              <div className="p-6 border-b border-gray-100">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-bold text-green-800">
-                    Permohonan Surat Pending
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {stats.map((stat, index) => (
+              <div key={index} className="card p-6 flex items-center space-x-4">
+                <div
+                  className={`p-3 rounded-full bg-opacity-20 ${stat.color.replace(
+                    "text-",
+                    "bg-"
+                  )}`}
+                >
+                  <stat.icon className={`h-8 w-8 ${stat.color}`} />
+                </div>
+                <div>
+                  <p className="text-gray-500 text-sm">{stat.title}</p>
+                  <h2 className="text-2xl font-bold text-gray-800">
+                    {stat.value}
                   </h2>
-                  <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
-                    {stats.suratPending} Pending
-                  </span>
                 </div>
               </div>
-              <div className="p-6">
-                <div className="space-y-4">
-                  {recentSurat
-                    .filter((s) => s.status === "pending")
-                    .map((surat) => (
-                      <div
-                        key={surat.id}
-                        className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-                      >
-                        <div className="flex items-center space-x-4">
-                          <FileText className="w-8 h-8 text-green-600" />
-                          <div>
-                            <p className="font-medium text-green-800">
-                              {surat.jenis}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              Pemohon: {surat.pemohon} ({surat.rt})
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              {surat.tanggal}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex space-x-2">
-                          <button className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700">
-                            Setujui
+            ))}
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Pending Letters */}
+            <div className="lg:col-span-2 card p-6">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                Permohonan Surat Pending
+              </h2>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Jenis Surat
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Pemohon
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        RT
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Aksi
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {pendingLetters.map((letter) => (
+                      <tr key={letter.id}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {letter.type}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                          {letter.applicant}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                          {letter.rt}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                            {letter.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <button className="text-green-600 hover:text-green-900 mr-3">
+                            <CheckCircle size={20} />
                           </button>
-                          <button className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700">
-                            Tolak
+                          <button className="text-red-600 hover:text-red-900">
+                            <XCircle size={20} />
                           </button>
-                        </div>
-                      </div>
+                        </td>
+                      </tr>
                     ))}
-                </div>
+                  </tbody>
+                </table>
               </div>
+              {pendingLetters.length === 0 && (
+                <p className="text-center text-gray-500 mt-4">
+                  Tidak ada permohonan surat pending.
+                </p>
+              )}
             </div>
 
-            {/* Laporan Warga */}
-            <div className="card">
-              <div className="p-6 border-b border-gray-100">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-bold text-green-800">
-                    Laporan Warga Terbaru
-                  </h2>
-                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                    {stats.laporanBaru} Baru
-                  </span>
-                </div>
-              </div>
-              <div className="p-6">
-                <div className="space-y-4">
-                  {recentLaporan.map((laporan) => (
-                    <div
-                      key={laporan.id}
-                      className="flex items-start justify-between p-4 bg-gray-50 rounded-lg"
-                    >
-                      <div className="flex items-start space-x-4">
-                        <MessageSquare className="w-8 h-8 text-blue-600 mt-1" />
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-1">
-                            <p className="font-medium text-green-800">
-                              {laporan.judul}
-                            </p>
-                            <span
-                              className={`w-2 h-2 rounded-full ${getPriorityColor(
-                                laporan.prioritas
-                              )}`}
-                            ></span>
-                          </div>
-                          <p className="text-sm text-gray-600">
-                            Pelapor: {laporan.pelapor}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            Kategori: {laporan.kategori}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {laporan.tanggal}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex flex-col items-end space-y-2">
+            {/* Recent Reports */}
+            <div className="card p-6">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                Laporan Warga Terbaru
+              </h2>
+              <ul className="space-y-4">
+                {recentReports.map((report) => (
+                  <li key={report.id} className="flex items-start space-x-3">
+                    <Bell className="h-5 w-5 text-red-500 flex-shrink-0 mt-1" />
+                    <div>
+                      <p className="text-gray-800 font-medium">
+                        {report.title}
+                      </p>
+                      <p className="text-gray-600 text-sm">
+                        Dari: {report.reporter} - Status:{" "}
                         <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                            laporan.status
-                          )}`}
+                          className={`font-semibold ${
+                            report.status === "Baru"
+                              ? "text-red-600"
+                              : "text-gray-600"
+                          }`}
                         >
-                          {laporan.status === "baru"
-                            ? "Baru"
-                            : laporan.status === "proses"
-                            ? "Proses"
-                            : "Selesai"}
+                          {report.status}
                         </span>
-                        <button className="text-green-600 hover:text-green-800 text-sm">
-                          Tindak Lanjut
-                        </button>
-                      </div>
+                      </p>
+                      <p className="text-gray-500 text-xs">
+                        Prioritas: {report.priority}
+                      </p>
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </li>
+                ))}
+              </ul>
+              {recentReports.length === 0 && (
+                <p className="text-center text-gray-500 mt-4">
+                  Tidak ada laporan baru.
+                </p>
+              )}
+              <Link
+                to="/lapor"
+                className="text-green-600 hover:underline font-medium mt-4 block text-right"
+              >
+                Lihat Semua Laporan &rarr;
+              </Link>
             </div>
           </div>
 
-          {/* Right Column */}
-          <div className="space-y-6">
+          {/* RT Performance */}
+          <div className="card p-6 mt-8">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              Performa RT
+            </h2>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      RT
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Jumlah Warga
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Surat Disetujui
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Iuran Terkumpul
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {rtPerformance.map((rt, index) => (
+                    <tr key={index}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {rt.rt}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {rt.warga}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {rt.suratApproved}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {rt.iuranCollected}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Quick Actions & Upcoming Activities */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
             {/* Quick Actions */}
             <div className="card p-6">
-              <h3 className="font-semibold text-green-800 mb-4">Aksi Cepat</h3>
-              <div className="space-y-3">
-                <button className="w-full flex items-center justify-start p-3 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
-                  <FileText className="w-5 h-5 text-green-600 mr-3" />
-                  <span className="text-green-800">Kelola Template Surat</span>
-                </button>
-                <button className="w-full flex items-center justify-start p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
-                  <Calendar className="w-5 h-5 text-blue-600 mr-3" />
-                  <span className="text-green-800">Buat Pengumuman</span>
-                </button>
-                <button className="w-full flex items-center justify-start p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors">
-                  <Users className="w-5 h-5 text-purple-600 mr-3" />
-                  <span className="text-green-800">Kelola Data Warga</span>
-                </button>
-                <button className="w-full flex items-center justify-start p-3 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors">
-                  <CreditCard className="w-5 h-5 text-orange-600 mr-3" />
-                  <span className="text-green-800">Laporan Keuangan</span>
-                </button>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                Aksi Cepat
+              </h2>
+              <div className="grid grid-cols-2 gap-4">
+                <Link
+                  to="/layanan/surat"
+                  className="btn-secondary flex items-center justify-center gap-2 py-3"
+                >
+                  <FileText size={20} /> Template Surat
+                </Link>
+                <Link
+                  to="/pengumuman"
+                  className="btn-secondary flex items-center justify-center gap-2 py-3"
+                >
+                  <Bell size={20} /> Buat Pengumuman
+                </Link>
+                <Link
+                  to="/dashboard/data-warga"
+                  className="btn-secondary flex items-center justify-center gap-2 py-3"
+                >
+                  <Users size={20} /> Data Warga
+                </Link>
+                <Link
+                  to="/dashboard/laporan-keuangan"
+                  className="btn-secondary flex items-center justify-center gap-2 py-3"
+                >
+                  <DollarSign size={20} /> Laporan Keuangan
+                </Link>
               </div>
             </div>
 
-            {/* Statistik RT */}
+            {/* Upcoming Activities */}
             <div className="card p-6">
-              <h3 className="font-semibold text-green-800 mb-4">
-                Statistik per RT
-              </h3>
-              <div className="space-y-4">
-                {rtStats.map((rt, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                  >
-                    <div>
-                      <p className="font-medium text-green-800">{rt.rt}</p>
-                      <p className="text-sm text-gray-600">{rt.warga} warga</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm text-green-600">
-                        {rt.iuran}% iuran
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {rt.laporan} laporan
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Kegiatan Mendatang */}
-            <div className="card p-6">
-              <h3 className="font-semibold text-green-800 mb-4">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">
                 Kegiatan Mendatang
-              </h3>
-              <div className="space-y-3">
-                <div className="flex items-start space-x-3">
-                  <Calendar className="w-5 h-5 text-green-600 mt-1" />
-                  <div>
-                    <p className="text-sm font-medium text-green-800">
-                      Gotong Royong
-                    </p>
-                    <p className="text-xs text-gray-500">Minggu, 25 Feb 2024</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <Calendar className="w-5 h-5 text-blue-600 mt-1" />
-                  <div>
-                    <p className="text-sm font-medium text-green-800">
-                      Rapat Koordinasi RT
-                    </p>
-                    <p className="text-xs text-gray-500">Senin, 26 Feb 2024</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <Calendar className="w-5 h-5 text-purple-600 mt-1" />
-                  <div>
-                    <p className="text-sm font-medium text-green-800">
-                      Posyandu Balita
-                    </p>
-                    <p className="text-xs text-gray-500">Rabu, 28 Feb 2024</p>
-                  </div>
-                </div>
-              </div>
+              </h2>
+              <ul className="space-y-3">
+                {upcomingActivities.map((activity) => (
+                  <li key={activity.id} className="flex items-start space-x-3">
+                    <CalendarDays className="h-5 w-5 text-green-600 flex-shrink-0 mt-1" />
+                    <div>
+                      <p className="text-gray-800 font-medium">
+                        {activity.name}
+                      </p>
+                      <p className="text-gray-600 text-sm">
+                        {activity.date} - {activity.time} di {activity.location}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              {upcomingActivities.length === 0 && (
+                <p className="text-center text-gray-500 mt-4">
+                  Tidak ada kegiatan mendatang.
+                </p>
+              )}
+              <Link
+                to="/layanan/kegiatan"
+                className="text-green-600 hover:underline font-medium mt-4 block text-right"
+              >
+                Lihat Semua Kegiatan &rarr;
+              </Link>
             </div>
           </div>
         </div>
       </main>
-
       <Footer />
     </div>
   );

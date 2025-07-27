@@ -1,239 +1,219 @@
 "use client";
 
 import { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Menu,
   X,
-  User,
-  Phone,
-  Mail,
-  LogOut,
-  Settings,
+  LogIn,
+  UserPlus,
+  Home,
+  Info,
+  FileText,
+  Users,
   Bell,
+  LogOut,
+  LayoutDashboard,
 } from "lucide-react";
-import { useAuth } from "../../contexts/AuthContext";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../../redux/auth/authSlice";
+import { showToast } from "../../utils";
 
 const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
+  const dispatch = useDispatch();
+  const { isLoggedIn, user } = useSelector((state) => state.auth);
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
 
   const handleLogout = () => {
-    logout();
-    navigate("/");
-    setIsUserMenuOpen(false);
+    dispatch(logout());
+    showToast("Anda telah berhasil logout!", "success");
+    navigate("/login");
+    setIsOpen(false);
   };
 
-  const isActive = (path) => {
-    return location.pathname === path;
+  const getDashboardLink = () => {
+    if (!user) return "/login";
+    switch (user.role) {
+      case "dukuh":
+        return "/dashboard/dukuh";
+      case "rt":
+        return "/dashboard/rt";
+      case "warga":
+        return "/dashboard/warga";
+      default:
+        return "/dashboard";
+    }
   };
-
-  const navLinks = [
-    { path: "/", label: "Beranda" },
-    { path: "/layanan", label: "Layanan" },
-    { path: "/pengumuman", label: "Pengumuman" },
-    { path: "/lapor", label: "Lapor Warga" },
-    { path: "/tentang", label: "Tentang" },
-  ];
 
   return (
-    <header className="bg-white shadow-sm border-b border-green-100 sticky top-0 z-40">
-      {/* Top Bar */}
-      <div className="bg-green-600 text-white py-2">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center text-sm">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-1">
-                <Phone className="w-4 h-4" />
-                <span>(0274) 123-4567</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <Mail className="w-4 h-4" />
-                <span>info@sipedes.id</span>
-              </div>
-            </div>
-            <div className="hidden md:block">
-              <span>Selamat datang di SIPEDES - Sistem Pelayanan Desa</span>
-            </div>
-          </div>
+    <header className="bg-white shadow-md sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+        <Link to="/" className="flex items-center space-x-2">
+          <img
+            src="/placeholder.svg?height=40&width=40"
+            alt="SIPEDES Logo"
+            className="h-10 w-10"
+          />
+          <span className="text-2xl font-bold text-green-700">SIPEDES</span>
+        </Link>
+
+        <nav className="hidden md:flex items-center space-x-6">
+          <Link
+            to="/"
+            className="text-gray-600 hover:text-green-700 font-medium flex items-center gap-1"
+          >
+            <Home size={18} /> Beranda
+          </Link>
+          <Link
+            to="/layanan"
+            className="text-gray-600 hover:text-green-700 font-medium flex items-center gap-1"
+          >
+            <FileText size={18} /> Layanan
+          </Link>
+          <Link
+            to="/pengumuman"
+            className="text-gray-600 hover:text-green-700 font-medium flex items-center gap-1"
+          >
+            <Bell size={18} /> Pengumuman
+          </Link>
+          <Link
+            to="/lapor"
+            className="text-gray-600 hover:text-green-700 font-medium flex items-center gap-1"
+          >
+            <Users size={18} /> Lapor
+          </Link>
+          <Link
+            to="/tentang"
+            className="text-gray-600 hover:text-green-700 font-medium flex items-center gap-1"
+          >
+            <Info size={18} /> Tentang
+          </Link>
+
+          {isLoggedIn ? (
+            <>
+              <Link
+                to={getDashboardLink()}
+                className="btn-secondary flex items-center gap-1"
+              >
+                <LayoutDashboard size={18} /> Dashboard
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="btn-primary flex items-center gap-1"
+              >
+                <LogOut size={18} /> Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="btn-secondary flex items-center gap-1"
+              >
+                <LogIn size={18} /> Login
+              </Link>
+              <Link
+                to="/register"
+                className="btn-primary flex items-center gap-1"
+              >
+                <UserPlus size={18} /> Register
+              </Link>
+            </>
+          )}
+        </nav>
+
+        <div className="md:hidden">
+          <button
+            onClick={toggleMenu}
+            className="text-gray-600 hover:text-green-700 focus:outline-none"
+          >
+            {isOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
         </div>
       </div>
 
-      {/* Main Header */}
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center py-4">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">S</span>
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-green-800">SIPEDES</h1>
-              <p className="text-sm text-green-600">Sistem Pelayanan Desa</p>
-            </div>
-          </Link>
+      {/* Mobile Menu */}
+      {isOpen && (
+        <div className="md:hidden bg-white shadow-lg pb-4">
+          <nav className="flex flex-col items-center space-y-4 py-4">
+            <Link
+              onClick={toggleMenu}
+              to="/"
+              className="text-gray-700 hover:text-green-700 font-medium flex items-center gap-2"
+            >
+              <Home size={20} /> Beranda
+            </Link>
+            <Link
+              onClick={toggleMenu}
+              to="/layanan"
+              className="text-gray-700 hover:text-green-700 font-medium flex items-center gap-2"
+            >
+              <FileText size={20} /> Layanan
+            </Link>
+            <Link
+              onClick={toggleMenu}
+              to="/pengumuman"
+              className="text-gray-700 hover:text-green-700 font-medium flex items-center gap-2"
+            >
+              <Bell size={20} /> Pengumuman
+            </Link>
+            <Link
+              onClick={toggleMenu}
+              to="/lapor"
+              className="text-gray-700 hover:text-green-700 font-medium flex items-center gap-2"
+            >
+              <Users size={20} /> Lapor
+            </Link>
+            <Link
+              onClick={toggleMenu}
+              to="/tentang"
+              className="text-gray-700 hover:text-green-700 font-medium flex items-center gap-2"
+            >
+              <Info size={20} /> Tentang
+            </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`font-medium transition-colors ${
-                  isActive(link.path)
-                    ? "text-green-600 border-b-2 border-green-600 pb-1"
-                    : "text-green-800 hover:text-green-600"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-
-          {/* User Menu / Login */}
-          <div className="hidden md:flex items-center space-x-4">
-            {user ? (
-              <div className="relative">
-                <button
-                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center space-x-2 px-4 py-2 border border-green-600 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+            {isLoggedIn ? (
+              <>
+                <Link
+                  onClick={toggleMenu}
+                  to={getDashboardLink()}
+                  className="btn-secondary w-auto flex items-center justify-center gap-2"
                 >
-                  <User className="w-4 h-4" />
-                  <span>{user.name}</span>
-                  <Bell className="w-4 h-4" />
+                  <LayoutDashboard size={20} /> Dashboard
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="btn-primary w-auto flex items-center justify-center gap-2"
+                >
+                  <LogOut size={20} /> Logout
                 </button>
-
-                {/* User Dropdown */}
-                {isUserMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white border border-green-100 rounded-lg shadow-lg py-2 z-50">
-                    <div className="px-4 py-2 border-b border-green-100">
-                      <p className="font-medium text-green-800">{user.name}</p>
-                      <p className="text-sm text-green-600 capitalize">
-                        {user.role}
-                      </p>
-                    </div>
-                    <Link
-                      to="/dashboard"
-                      className="flex items-center px-4 py-2 text-green-700 hover:bg-green-50"
-                      onClick={() => setIsUserMenuOpen(false)}
-                    >
-                      <Settings className="w-4 h-4 mr-3" />
-                      Dashboard
-                    </Link>
-                    <button
-                      onClick={handleLogout}
-                      className="flex items-center w-full px-4 py-2 text-red-600 hover:bg-red-50"
-                    >
-                      <LogOut className="w-4 h-4 mr-3" />
-                      Keluar
-                    </button>
-                  </div>
-                )}
-              </div>
+              </>
             ) : (
               <>
                 <Link
+                  onClick={toggleMenu}
                   to="/login"
-                  className="flex items-center px-4 py-2 border border-green-600 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                  className="btn-secondary w-auto flex items-center justify-center gap-2"
                 >
-                  <User className="w-4 h-4 mr-2" />
-                  Masuk
+                  <LogIn size={20} /> Login
                 </Link>
                 <Link
+                  onClick={toggleMenu}
                   to="/register"
-                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                  className="btn-primary w-auto flex items-center justify-center gap-2"
                 >
-                  Daftar
+                  <UserPlus size={20} /> Register
                 </Link>
               </>
             )}
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? (
-              <X className="w-6 h-6 text-green-800" />
-            ) : (
-              <Menu className="w-6 h-6 text-green-800" />
-            )}
-          </button>
+          </nav>
         </div>
-
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-green-100 animate-slide-up">
-            <nav className="flex flex-col space-y-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`font-medium transition-colors ${
-                    isActive(link.path)
-                      ? "text-green-600"
-                      : "text-green-800 hover:text-green-600"
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
-
-              {user ? (
-                <div className="flex flex-col space-y-2 pt-4 border-t border-green-100">
-                  <div className="px-2 py-1">
-                    <p className="font-medium text-green-800">{user.name}</p>
-                    <p className="text-sm text-green-600 capitalize">
-                      {user.role}
-                    </p>
-                  </div>
-                  <Link
-                    to="/dashboard"
-                    className="flex items-center px-2 py-2 text-green-700 hover:bg-green-50 rounded"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <Settings className="w-4 h-4 mr-3" />
-                    Dashboard
-                  </Link>
-                  <button
-                    onClick={() => {
-                      handleLogout();
-                      setIsMenuOpen(false);
-                    }}
-                    className="flex items-center px-2 py-2 text-red-600 hover:bg-red-50 rounded"
-                  >
-                    <LogOut className="w-4 h-4 mr-3" />
-                    Keluar
-                  </button>
-                </div>
-              ) : (
-                <div className="flex flex-col space-y-2 pt-4 border-t border-green-100">
-                  <Link
-                    to="/login"
-                    className="flex items-center justify-center px-4 py-2 border border-green-600 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <User className="w-4 h-4 mr-2" />
-                    Masuk
-                  </Link>
-                  <Link
-                    to="/register"
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-center"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Daftar
-                  </Link>
-                </div>
-              )}
-            </nav>
-          </div>
-        )}
-      </div>
+      )}
     </header>
   );
 };
