@@ -33,7 +33,7 @@ const Hero = () => {
         </div>
         <div className="lg:w-1/2 flex justify-center lg:justify-end animate-bounce-in">
           <img
-            src="/placeholder.svg?height=400&width=600"
+            src="/LogoSipedes.jpg"
             alt="SIPEDES Illustration"
             className="w-full max-w-md rounded-lg shadow-2xl"
           />

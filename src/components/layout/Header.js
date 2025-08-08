@@ -55,9 +55,9 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
         <Link to="/" className="flex items-center space-x-2">
           <img
-            src="/placeholder.svg?height=40&width=40"
+            src="/LogoSipedes.jpg"
             alt="SIPEDES Logo"
-            className="h-10 w-10"
+            className="h-10 w-10 "
           />
           <span className="text-2xl font-bold text-green-700">SIPEDES</span>
         </Link>
@@ -198,14 +198,14 @@ const Header = () => {
                 <Link
                   onClick={toggleMenu}
                   to="/login"
-                  className="btn-secondary w-auto flex items-center justify-center gap-2"
+                  className="btn-secondary w-auto flex items-center justify-center gap-2 rounded"
                 >
                   <LogIn size={20} /> Login
                 </Link>
                 <Link
                   onClick={toggleMenu}
                   to="/register"
-                  className="btn-primary w-auto flex items-center justify-center gap-2"
+                  className="btn-primary w-auto flex items-center justify-center gap-2 rounded"
                 >
                   <UserPlus size={20} /> Register
                 </Link>
