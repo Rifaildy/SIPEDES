@@ -87,13 +87,7 @@ const Header = () => {
           >
             <Users size={18} /> Lapor
           </Link>
-          <Link
-            to="/tentang"
-            className="text-gray-600 hover:text-green-700 font-medium flex items-center gap-1"
-          >
-            <Info size={18} /> Tentang
-          </Link>
-
+          
           {isLoggedIn ? (
             <>
               <Link
