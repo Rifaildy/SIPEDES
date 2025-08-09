@@ -5,7 +5,7 @@ const newsItems = [
     id: 1,
     title: "Gotong Royong Bersih Desa Sukses Digelar",
     date: "15 Juli 2024",
-    image: "/placeholder.svg?height=200&width=300",
+    image: "/bersih.jpeg?height=200&width=300",
     excerpt:
       "Warga Desa Makmur bersatu padu membersihkan lingkungan desa dalam kegiatan gotong royong tahunan...",
   },
@@ -13,7 +13,7 @@ const newsItems = [
     id: 2,
     title: "Pelatihan UMKM Digital untuk Warga Desa",
     date: "10 Juli 2024",
-    image: "/placeholder.svg?height=200&width=300",
+    image: "/pelatihan.jpeg?height=200&width=300",
     excerpt:
       "Pemerintah desa mengadakan pelatihan gratis bagi pelaku UMKM untuk meningkatkan pemasaran online...",
   },
@@ -21,7 +21,7 @@ const newsItems = [
     id: 3,
     title: "Pembangunan Posyandu Baru Dimulai",
     date: "01 Juli 2024",
-    image: "/placeholder.svg?height=200&width=300",
+    image: "/posyandu.jpg?height=200&width=300",
     excerpt:
       "Proyek pembangunan posyandu modern di Dusun Melati telah dimulai, diharapkan selesai akhir tahun...",
   },

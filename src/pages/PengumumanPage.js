@@ -2,9 +2,9 @@
 
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { Search } from "lucide-react";
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
-import { Search } from "lucide-react";
 
 const allAnnouncements = [
   {
@@ -58,10 +58,7 @@ const PengumumanPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState("All");
 
-  const categories = [
-    "All",
-    ...new Set(allAnnouncements.map((ann) => ann.category)),
-  ];
+  const categories = ["All", ...new Set(allAnnouncements.map((ann) => ann.category))];
 
   const filteredAnnouncements = allAnnouncements.filter((announcement) => {
     const matchesSearch = announcement.title
@@ -75,40 +72,47 @@ const PengumumanPage = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
+
       <main className="flex-grow py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-7xl mx-auto">
+          {/* Title Section */}
           <h1 className="text-4xl font-extrabold text-gray-800 text-center mb-6">
             Pengumuman Desa
           </h1>
           <p className="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto">
-            Informasi terbaru dan penting dari pemerintah desa untuk seluruh
-            warga.
+            Informasi terbaru dan penting dari pemerintah desa untuk seluruh warga.
           </p>
 
+          {/* Search & Filter */}
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
-            <div className="relative flex-grow">
-              <input
-                type="text"
-                placeholder="Cari pengumuman..."
-                className="form-input pl-10"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
-            </div>
-            <select
-              className="form-input sm:w-auto"
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-            >
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
-          </div>
+  {/* Search Input */}
+  <div className="relative flex-1">
+    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
+    <input
+      type="text"
+      placeholder="Cari pengumuman..."
+      className="form-input pl-10 w-full"
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+    />
+  </div>
 
+  {/* Dropdown */}
+  <select
+    className="form-input w-full sm:w-40"
+    value={filterCategory}
+    onChange={(e) => setFilterCategory(e.target.value)}
+  >
+    {categories.map((category) => (
+      <option key={category} value={category}>
+        {category}
+      </option>
+    ))}
+  </select>
+</div>
+
+
+          {/* Announcement List */}
           {filteredAnnouncements.length === 0 ? (
             <p className="text-center text-gray-600 text-xl mt-10">
               Tidak ada pengumuman yang ditemukan.
@@ -129,9 +133,7 @@ const PengumumanPage = () => {
                     <h2 className="text-xl font-semibold text-gray-800 mb-2">
                       {announcement.title}
                     </h2>
-                    <p className="text-sm text-gray-500 mb-3">
-                      {announcement.date}
-                    </p>
+                    <p className="text-sm text-gray-500 mb-3">{announcement.date}</p>
                     <p className="text-gray-600 text-sm line-clamp-3">
                       {announcement.content}
                     </p>
@@ -148,6 +150,7 @@ const PengumumanPage = () => {
           )}
         </div>
       </main>
+
       <Footer />
     </div>
   );

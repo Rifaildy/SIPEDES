@@ -5,7 +5,7 @@ const Hero = () => {
     <section className="relative bg-gradient-to-r from-green-600 to-green-800 text-white py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
       <div className="absolute inset-0 z-0">
         <img
-          src="/placeholder.svg?height=800&width=1200"
+          src="/village.jpg?height=800&width=1200"
           alt="Background Pattern"
           className="w-full h-full object-cover opacity-20"
         />

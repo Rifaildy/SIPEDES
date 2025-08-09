@@ -30,7 +30,7 @@ const TentangPage = () => {
             </div>
             <div className="flex justify-center">
               <img
-                src="/placeholder.svg?height=300&width=500"
+                src="/lamp.png?height=100&width=300"
                 alt="Visi Kami"
                 className="rounded-lg shadow-lg"
               />
@@ -60,7 +60,7 @@ const TentangPage = () => {
             </div>
             <div className="flex justify-center">
               <img
-                src="/placeholder.svg?height=300&width=500"
+                src="/globe.jpg?height=300&width=500"
                 alt="Misi Kami"
                 className="rounded-lg shadow-lg"
               />
@@ -105,17 +105,40 @@ const TentangPage = () => {
           </div>
 
           <div className="text-center mt-16">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">Tim Kami</h2>
-            <p className="text-lg text-gray-600 mb-8">
-              SIPEDES dikembangkan oleh tim yang berdedikasi untuk kemajuan
-              desa.
-            </p>
-            <img
-              src="/placeholder.svg?height=300&width=800"
-              alt="Tim SIPEDES"
-              className="rounded-lg shadow-lg mx-auto"
-            />
-          </div>
+  <h2 className="text-3xl font-bold text-gray-800 mb-4">Tim Kami</h2>
+  <p className="text-lg text-gray-600 mb-8">
+    SIPEDES dikembangkan oleh tim yang berdedikasi untuk kemajuan desa.
+  </p>
+
+  
+  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
+    <div>
+      <img
+        src="/rifa.jpg"
+        alt="Rifaildy Nurhuda Assalam"
+        className="rounded-lg shadow-lg w-full h-64 object-cover"
+      />
+      <p className="mt-2 font-medium text-gray-700">Rifaildy Nurhuda Assalam</p>
+    </div>
+    <div>
+     <img
+        src="/rifa.jpg"
+        alt="Rifaildy Nurhuda Assalam"
+        className="rounded-lg shadow-lg w-full h-64 object-cover"
+      />
+      <p className="mt-2 font-medium text-gray-700">Rifaildy Nurhuda Assalam</p>
+    </div>
+    <div>
+      <img
+        src="/rifa.jpg"
+        alt="Rifaildy Nurhuda Assalam"
+        className="rounded-lg shadow-lg w-full h-64 object-cover"
+      />
+      <p className="mt-2 font-medium text-gray-700">Rifaildy Nurhuda Assalam</p>
+    </div>
+  </div>
+</div>
+
         </div>
       </main>
       <Footer />
